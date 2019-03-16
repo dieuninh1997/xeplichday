@@ -2,7 +2,7 @@ const path = require('path')
 const express = require('express')
 const nunjucks = require('nunjucks')
 const bodyParser = require('body-parser')
-
+const _ = require('lodash')
 const dbConfig = require('./config')
 const knex = require('knex')(dbConfig)
 const app = express()
@@ -49,13 +49,50 @@ app.get('/:type', async (req, res) => {
         await knex('lop').select(),
         await knex('monhoc').select()
       ])
-      res.render(template, {
-        listTeacher: listTeacherNew,
-        listClass: listClassNew,
-        listSubject: listSubjectNew,
-        numberOfSuject: listSubjectNew.length
-      })
-      break
+      const thoiGianHoc = [{ k: 'K65', value: 's' }, { k: 'K66', value: 'c' }, { k: 'K67', value: 's' }, { k: 'K68', value: 'c' }]
+      const danhSachCuoiCung = []
+      for (let index = 0; index < listSubjectNew.length; index++) {
+        const subject = listSubjectNew[index]
+        const idLopHoc = subject.lop
+        const lopHoc = _.filter(listClassNew, { id: idLopHoc })
+        const buoiHoc = _.filter(thoiGianHoc, { k: lopHoc[0].khoahoc })
+        const buoiHocDuocPhep = buoiHoc[0].value
+
+        for (let sotinchi = 1; sotinchi <= subject.sotinchi; sotinchi++) {
+          const danhSachThuHoc = ['2', '3', '4', '5', '6']
+          let danhSachTietHocMotMot = []
+          let danhSachTietHoc = []
+          if (buoiHocDuocPhep === 's') {
+            danhSachTietHoc = ['1', '2', '3', '4', '5']
+            danhSachTietHocMotMot = ['1-1', '2-2', '3-3', '4-4', '5-5']
+          } else {
+            danhSachTietHoc = ['6', '7', '8', '9', '10']
+            danhSachTietHocMotMot = ['6-6', '7-7', '8-8', '9-9', '10-10']
+          }
+          let dsTietHocTheoTinChi = []
+          for (let i = 0; i < 5 - sotinchi + 1; i++) {
+            if (sotinchi > 1) {
+              const pairTietHoc = `${danhSachTietHoc[i]}-${danhSachTietHoc[i + sotinchi - 1]}`
+              dsTietHocTheoTinChi.push(pairTietHoc)
+            } else {
+              dsTietHocTheoTinChi = danhSachTietHocMotMot
+            }
+          }
+
+          const indexTietHoc = Math.floor(Math.random() * dsTietHocTheoTinChi.length)
+          const indexThuHoc = Math.floor(Math.random() * danhSachThuHoc.length)
+
+          danhSachCuoiCung.push({
+            monhoc: subject,
+            thu: danhSachThuHoc[indexThuHoc],
+            tiet: dsTietHocTheoTinChi[indexTietHoc],
+            lop: lopHoc[0],
+            buoiHocDuocPhep
+          })
+        }
+      }
+      const ds = _.sortBy(danhSachCuoiCung, ['thu', 'tiet'])
+      return res.render('tkb/tkb.html', { danhSachCuoiCung: ds })
     case 'lop':
       const listClassNeww = await knex('lop').select()
       res.render(template, {
