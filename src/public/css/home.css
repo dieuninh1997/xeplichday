@@ -17,9 +17,7 @@
   line-height: 44px;
   height: 44px;
   color: rgba(0,0,0,0.87);
-}
-.mh-container, .lop-container {
-  display: none;
+  display: list-item;
 }
 .form-title {
   color: rgba(0,0,0,0.87);

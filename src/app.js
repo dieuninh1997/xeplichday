@@ -19,17 +19,110 @@ app.use(bodyParser.json())
 
 app.get('/', async (req, res) => {
   const listTeacher = await knex('giangvien').select()
-  const listClass = await knex('lop').select()
-  const listSubject = await knex('monhoc').select()
 
-  res.render('home/home.html', {
+  res.render('giangvien/giangvien.html', {
     listTeacher,
-    listClass,
-    listSubject,
-    numberOfTeacher: listTeacher.length,
-    numberOfSuject: listSubject.length,
-    numberOfClass: listClass.length
+    numberOfTeacher: listTeacher.length
   })
+})
+
+app.get('/:type', async (req, res) => {
+  const { type } = req.params
+  const template = `${type}/${type}.html`
+  switch (type) {
+    case 'monhoc':
+      const [listTeacher, listClass, listSubject] = await Promise.all([
+        await knex('giangvien').select(),
+        await knex('lop').select(),
+        await knex('monhoc').select()
+      ])
+      res.render(template, {
+        listTeacher,
+        listClass,
+        listSubject,
+        numberOfSuject: listSubject.length
+      })
+      break
+    case 'tkb':
+      const [listTeacherNew, listClassNew, listSubjectNew] = await Promise.all([
+        await knex('giangvien').select(),
+        await knex('lop').select(),
+        await knex('monhoc').select()
+      ])
+      res.render(template, {
+        listTeacher: listTeacherNew,
+        listClass: listClassNew,
+        listSubject: listSubjectNew,
+        numberOfSuject: listSubjectNew.length
+      })
+      break
+    case 'lop':
+      const listClassNeww = await knex('lop').select()
+      res.render(template, {
+        listClass: listClassNeww,
+        numberOfClass: listClassNeww.length
+      })
+      break
+    default:
+      break
+  }
+})
+
+app.get('/edit/:type/:id', async (req, res) => {
+  try {
+    const { type, id } = req.params
+    if (!id) { throw new Error('Không tìm thấy thông tin') }
+
+    const dataEdit = await knex(type).select().where({ id }).first()
+    const listTeacher = await knex('giangvien').select()
+    const listClass = await knex('lop').select()
+    const template = `${type}/edit-${type}.html`
+    res.render(template, {
+      dataEdit,
+      listTeacher,
+      listClass
+    })
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+      data: error
+    })
+  }
+})
+
+app.post('/edit/:type/:id', async (req, res, next) => {
+  try {
+    const { type, id } = req.params
+    const { name, note, khoahoc, sotinchi, giangvien, lop } = req.body
+    if (!id) { throw new Error('Không tìm thấy thông tin') }
+    switch (type) {
+      case 'giangvien':
+        if (!name) { throw new Error('Tên giảng viên là bắt buộc') }
+        await knex(type).where({ id }).update({ name, note })
+        return res.redirect('/giangvien')
+      case 'monhoc':
+        if (!name) { throw new Error('Tên môn học là bắt buộc') }
+        if (!sotinchi) { throw new Error('Vui lòng chọn số tín chỉ') }
+        if (!giangvien) { throw new Error('Vui lòng chọn giảng viên') }
+        if (!lop) { throw new Error('Vui lòng chọn lớp') }
+        await knex(type).where({ id }).update({ name, sotinchi, giangvien, lop })
+        return res.redirect('/monhoc')
+      case 'lop':
+        if (!name) { throw new Error('Tên lớp là bắt buộc') }
+        if (!khoahoc) { throw new Error('Khoá học là bắt buộc') }
+        await knex(type).where({ id }).update({ name, khoahoc })
+        return res.redirect('/lop')
+      default:
+        return res.redirect('/')
+    }
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+      data: error
+    })
+  }
 })
 
 app.post('/giangvien', async (req, res, next) => {

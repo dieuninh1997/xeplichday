@@ -7,21 +7,12 @@
     $('select').formSelect()
     $('.tooltipped').tooltip()
 
-    var $btnGv = $('#btn-gv')
-    var $btnMh = $('#btn-mh')
-    var $btnLop = $('#btn-lop')
     var $formAddGv = $('#form-add-gv')
     var $formAddLop = $('#form-add-lop')
     var $formAddMh = $('#form-add-mh')
-    var $gvContainer = $('.gv-container')
-    var $mhContainer = $('.mh-container')
-    var $lopContainer = $('.lop-container')
     var numberOfTeacher = $formAddGv.data('number')
     var numberOfSubject = $formAddMh.data('number')
     var numberOfClass = $formAddLop.data('number')
-    $btnGv.on('click', handleClickGv)
-    $btnMh.on('click', handleClickMh)
-    $btnLop.on('click', handleClickLop)
     $formAddGv.on('submit', handleAddGv)
     $formAddLop.on('submit', handleAddLop)
     $formAddMh.on('submit', handleAddMh)
@@ -255,24 +246,6 @@
         return window.toastr.error(message)
       }
       window.toastr.success(message)
-    }
-
-    function handleClickGv (event) {
-      $gvContainer.show()
-      $mhContainer.hide()
-      $lopContainer.hide()
-    }
-
-    function handleClickMh (event) {
-      $gvContainer.hide()
-      $mhContainer.show()
-      $lopContainer.hide()
-    }
-
-    function handleClickLop (event) {
-      $gvContainer.hide()
-      $mhContainer.hide()
-      $lopContainer.show()
     }
   }
 })
