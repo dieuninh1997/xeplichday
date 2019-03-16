@@ -1,28 +1,19 @@
 const path = require('path')
 const express = require('express')
 const nunjucks = require('nunjucks')
-const knex = require('knex')({
-  client: 'mysql',
-  connection: {
-    host: 'us-cdbr-iron-east-03.cleardb.net',
-    user: 'bdbab7d3c26eb7',
-    password: '1798c122',
-    database: 'heroku_1b7e742606542ba'
-  }
-})
 const bodyParser = require('body-parser')
 
+const dbConfig = require('./config')
+const knex = require('knex')(dbConfig)
 const app = express()
 
 app.use(express.static(path.resolve(__dirname, './public')))
-
 app.set('views', path.resolve(__dirname, './views'))
 nunjucks.configure(path.resolve(__dirname, './views'), {
   autoescape: true,
   express: app
 })
 app.set('view engine', 'html')
-
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -34,16 +25,17 @@ app.get('/', async (req, res) => {
   res.render('home/home.html', {
     listTeacher,
     listClass,
-    listSubject
+    listSubject,
+    numberOfTeacher: listTeacher.length,
+    numberOfSuject: listSubject.length,
+    numberOfClass: listClass.length
   })
 })
 
 app.post('/giangvien', async (req, res, next) => {
   try {
     const { name, note } = req.body
-    if (!name) {
-      throw new Error('Tên giảng viên là bắt buộc')
-    }
+    if (!name) { throw new Error('Tên giảng viên là bắt buộc') }
 
     const idRow = await knex('giangvien').insert({ name, note })
     const infoGv = await knex('giangvien').select().where('id', idRow[0]).first()
@@ -62,22 +54,34 @@ app.post('/giangvien', async (req, res, next) => {
   }
 })
 
+app.delete('/:type/:id', async (req, res, next) => {
+  try {
+    const { type, id } = req.params
+    if (!id) { throw new Error('Không tìm thấy thông tin') }
+
+    await knex(type).where({ id }).del()
+    res.json({
+      success: true,
+      message: 'Xoá thành công',
+      data: { id }
+    })
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+      data: error
+    })
+  }
+})
+
 app.post('/monhoc', async (req, res, next) => {
   try {
     const { name, sotinchi, giangvien, lop } = req.body
 
-    if (!name) {
-      throw new Error('Tên lớp là bắt buộc')
-    }
-    if (!sotinchi) {
-      throw new Error('Số tín chỉ là bắt buộc')
-    }
-    if (!giangvien) {
-      throw new Error('Giảng viên là bắt buộc')
-    }
-    if (!lop) {
-      throw new Error('Lớp là bắt buộc')
-    }
+    if (!name) { throw new Error('Tên lớp là bắt buộc') }
+    if (!sotinchi) { throw new Error('Số tín chỉ là bắt buộc') }
+    if (!giangvien) { throw new Error('Giảng viên là bắt buộc') }
+    if (!lop) { throw new Error('Lớp là bắt buộc') }
 
     const idRow = await knex('monhoc').insert({ name, sotinchi, giangvien, lop })
     const infoMh = await knex('monhoc').select().where('id', idRow[0]).first()
@@ -100,12 +104,8 @@ app.post('/lop', async (req, res, next) => {
   try {
     const { name, khoahoc } = req.body
 
-    if (!name) {
-      throw new Error('Tên lớp là bắt buộc')
-    }
-    if (!khoahoc) {
-      throw new Error('Khoá học là bắt buộc')
-    }
+    if (!name) { throw new Error('Tên lớp là bắt buộc') }
+    if (!khoahoc) { throw new Error('Khoá học là bắt buộc') }
 
     const idRow = await knex('lop').insert({ name, khoahoc })
     const infoLop = await knex('lop').select().where('id', idRow[0]).first()
@@ -123,4 +123,5 @@ app.post('/lop', async (req, res, next) => {
     })
   }
 })
+
 module.exports = app

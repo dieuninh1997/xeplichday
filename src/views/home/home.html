@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@7.33.1/dist/sweetalert2.min.css">
   <link rel="stylesheet" href="/css/home.css" />
   <title>HNUE - Xếp lịch giảng dạy</title>
 </head>
@@ -33,8 +34,10 @@
     </div>
 
     <div class="col s9">
+
       <div class="row gv-container">
-        <form action="/giangvien" method="POST" class="col s12 card-panel form-input" id="form-add-gv">
+        <form action="/giangvien" method="POST" class="col s12 card-panel form-input" id="form-add-gv"
+          data-number="{{numberOfTeacher}}">
           <h5 class="form-title">Thông tin giảng viên</h5>
           <div class="row">
             <div class="input-field col s6">
@@ -60,14 +63,24 @@
                   <th>STT</th>
                   <th>Giảng Viên</th>
                   <th>Ghi Chú</th>
+                  <th>Hành Động</th>
                 </tr>
               </thead>
               <tbody class="gv-table-body">
                 {% for teacher in listTeacher %}
-                <tr>
+                <tr id="giangvien-{{teacher.id}}">
                   <td>{{ loop.index }}</td>
                   <td>{{ teacher.name }}</td>
                   <td>{{ teacher.note }}</td>
+                  <td>
+                    <a class="waves-effect waves-light btn btn-small">
+                      <i class="material-icons">edit</i>
+                    </a>
+                    <a href="/giangvien/{{ teacher.id }}"
+                      class="waves-effect waves-light btn btn-small red lighten-2 btn-delete-gv">
+                      <i class="material-icons">delete</i>
+                    </a>
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -75,8 +88,10 @@
           </div>
         </div>
       </div>
+
+
       <div class="row mh-container">
-        <form action="/monhoc" method="POST" class="col s12 card-panel form-input" id="form-add-mh">
+        <form action="/monhoc" method="POST" class="col s12 card-panel form-input" id="form-add-mh" data-number="{{numberOfSuject}}" >
           <h5 class="form-title">Thông tin môn học</h5>
           <div class="row">
             <div class="input-field col s6">
@@ -128,16 +143,26 @@
                   <th>Số tín chỉ</th>
                   <th>Giảng viên</th>
                   <th>Lớp</th>
+                  <th>Hành động</th>
                 </tr>
               </thead>
               <tbody class="mh-table-body">
                 {% for subject in listSubject %}
-                <tr>
+                <tr id="monhoc-{{subject.id}}">
                   <td>{{ loop.index }}</td>
                   <td>{{ subject.name }}</td>
                   <td>{{ subject.sotinchi }}</td>
                   <td>{{ subject.giangvien }}</td>
                   <td>{{ subject.lop }}</td>
+                  <td>
+                    <a class="waves-effect waves-light btn btn-small">
+                      <i class="material-icons">edit</i>
+                    </a>
+                    <a href="/monhoc/{{ subject.id }}"
+                      class="waves-effect waves-light btn btn-small red lighten-2 btn-delete-mh">
+                      <i class="material-icons">delete</i>
+                    </a>
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -145,8 +170,10 @@
           </div>
         </div>
       </div>
+
+
       <div class="row lop-container">
-        <form action="/lop" method="POST" class="col s12 card-panel form-input" id="form-add-lop">
+        <form action="/lop" method="POST" class="col s12 card-panel form-input" id="form-add-lop" data-number="{{numberOfClass}}">
           <h5 class="form-title">Thông tin Lớp</h5>
           <div class="row">
             <div class="input-field col s6">
@@ -171,14 +198,24 @@
                   <th>STT</th>
                   <th>Lớp</th>
                   <th>Khoá học</th>
+                  <th>Hành động</th>
                 </tr>
               </thead>
               <tbody class="lop-table-body">
                 {% for lop in listClass %}
-                <tr>
+                <tr id="lop-{{lop.id}}">
                   <td>{{ loop.index }}</td>
                   <td>{{ lop.name }}</td>
                   <td>{{ lop.khoahoc }}</td>
+                  <td>
+                    <a class="waves-effect waves-light btn btn-small">
+                      <i class="material-icons">edit</i>
+                    </a>
+                    <a href="/lop/{{ lop.id }}"
+                      class="waves-effect waves-light btn btn-small red lighten-2 btn-delete-lop">
+                      <i class="material-icons">delete</i>
+                    </a>
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -194,6 +231,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.33.1/dist/sweetalert2.min.js"></script>
   <script src="/js/home.js"></script>
 </body>
 
