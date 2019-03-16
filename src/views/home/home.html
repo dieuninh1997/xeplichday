@@ -1,20 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel='SHORTCUT ICON' href='http://tuyensinh.hnue.edu.vn/Portals/0/favicon.ico?ver=2018-09-23-091317-260'
+    type='image/x-icon' />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-  <title>Xep lich day</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <link rel="stylesheet" href="/css/home.css" />
+  <title>HNUE - Xếp lịch giảng dạy</title>
 </head>
-<body>
-  <div>Haha</div>
 
-  <script
-  src="http://code.jquery.com/jquery-3.3.1.min.js"
-  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-  crossorigin="anonymous"></script>
+<body>
+  <nav class="nav-head light-blue">
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo">HNUE</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="/">Nhập thông tin</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="row content-container">
+    <div class="col s3 nav-left">
+      <ul class="">
+        <li class="nav-left-row" id="btn-gv">Giáo Viên</li>
+        <li class="nav-left-row" id="btn-mh">Môn Học</li>
+        <li class="nav-left-row" id="btn-lop">Lớp</li>
+      </ul>
+    </div>
+
+    <div class="col s9">
+      <div class="row gv-container">
+        <form action="/giangvien" method="POST" class="col s12 card-panel form-input" id="form-add-gv">
+          <h5 class="form-title">Thông tin giảng viên</h5>
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="first_name" type="text" class="validate" name="name">
+              <label for="first_name">Họ Và Tên</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="note" type="text" class="validate" name="note">
+              <label for="note">Ghi chú</label>
+            </div>
+          </div>
+          <button class="btn waves-effect waves-light center btn-submit light-blue btn-form-gv" type="submit">Thêm Giảng
+            Viên
+            <i class="material-icons right">send</i>
+          </button>
+        </form>
+        <div class="divider"></div>
+        <div class="row">
+          <div class="col s12">
+            <table class="striped">
+              <thead class="table-head ">
+                <tr>
+                  <th>STT</th>
+                  <th>Giảng Viên</th>
+                  <th>Ghi Chú</th>
+                </tr>
+              </thead>
+              <tbody class="gv-table-body">
+                {% for teacher in listTeacher %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td>{{ teacher.name }}</td>
+                  <td>{{ teacher.note }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row mh-container">
+        <form action="/monhoc" method="POST" class="col s12 card-panel form-input" id="form-add-mh">
+          <h5 class="form-title">Thông tin môn học</h5>
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="first_name" type="text" class="validate" name="name">
+              <label for="first_name">Tên môn học</label>
+            </div>
+            <div class="input-field col s6">
+              <select name="sotinchi">
+                <option value="" disabled selected>Chọn số tín chỉ</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <label>Số tín chỉ</label>
+            </div>
+            <div class="input-field col s6">
+              <select name="giangvien" id="select-gv">
+                <option value="" disabled selected>Chọn giảng viên</option>
+                {% for teacher in listTeacher %}
+                <option value={{teacher.id}}>{{teacher.name}}</option>
+                {% endfor %}
+              </select>
+              <label>Giảng viên</label>
+            </div>
+            <div class="input-field col s6">
+              <select name="lop" id="select-lop">
+                <option value="" disabled selected>Chọn lớp</option>
+                {% for lop in listClass %}
+                <option value={{lop.id}}>{{lop.name}}</option>
+                {% endfor %}
+              </select>
+              <label>Lớp</label>
+            </div>
+          </div>
+          <button class="btn waves-effect waves-light center btn-submit light-blue " type="submit">Thêm Môn Học
+            <i class="material-icons right">send</i>
+          </button>
+        </form>
+        <div class="divider"></div>
+        <div class="row">
+          <div class="col s12">
+            <table class="striped">
+              <thead class="table-head ">
+                <tr>
+                  <th>STT</th>
+                  <th>Môn học</th>
+                  <th>Số tín chỉ</th>
+                  <th>Giảng viên</th>
+                  <th>Lớp</th>
+                </tr>
+              </thead>
+              <tbody class="mh-table-body">
+                {% for subject in listSubject %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td>{{ subject.name }}</td>
+                  <td>{{ subject.sotinchi }}</td>
+                  <td>{{ subject.giangvien }}</td>
+                  <td>{{ subject.lop }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row lop-container">
+        <form action="/lop" method="POST" class="col s12 card-panel form-input" id="form-add-lop">
+          <h5 class="form-title">Thông tin Lớp</h5>
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="first_name" type="text" class="validate" name="name">
+              <label for="first_name">Tên lớp</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="note" type="text" class="validate" name="khoahoc">
+              <label for="note">Khoá học</label>
+            </div>
+          </div>
+          <button class="btn waves-effect waves-light center btn-submit light-blue" type="submit">Thêm Lớp
+            <i class="material-icons right">send</i>
+          </button>
+        </form>
+        <div class="divider"></div>
+        <div class="row">
+          <div class="col s12">
+            <table class="striped">
+              <thead class="table-head ">
+                <tr>
+                  <th>STT</th>
+                  <th>Lớp</th>
+                  <th>Khoá học</th>
+                </tr>
+              </thead>
+              <tbody class="lop-table-body">
+                {% for lop in listClass %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td>{{ lop.name }}</td>
+                  <td>{{ lop.khoahoc }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="http://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="/js/home.js"></script>
 </body>
+
 </html>

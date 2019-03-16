@@ -3,8 +3,11 @@
     "start:dev": "pm2-dev index.js"
   },
   "dependencies": {
+    "body-parser": "1.18.3",
     "express": "4.16.4",
+    "knex": "0.16.3",
     "lodash": "4.17.11",
+    "mysql": "2.16.0",
     "nunjucks": "3.2.0",
     "pm2": "3.4.0"
   },
