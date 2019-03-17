@@ -33,7 +33,7 @@
           <select name="lop" id="select-lop">
             <option value="" disabled>Chọn lớp</option>
             {% for lop in listClass %}
-            <option value="{{lop.id}}" {% if dataEdit.lop == lop.id %} selected {% endif %}>{{lop.name}}</option>
+            <option value="{{lop.id}}" {% if dataEdit.lop == lop.id %} selected {% endif %}>{{lop.name}} - K{{lop.khoahoc}}</option>
             {% endfor %}
           </select>
           <label>Lớp</label>

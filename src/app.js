@@ -83,7 +83,7 @@ app.get('/:type', async (req, res) => {
           const indexThuHoc = Math.floor(Math.random() * danhSachThuHoc.length)
 
           danhSachCuoiCung.push({
-            monhoc: subject,
+            ...subject,
             thu: danhSachThuHoc[indexThuHoc],
             tiet: dsTietHocTheoTinChi[indexTietHoc],
             lop: lopHoc[0],
@@ -92,7 +92,13 @@ app.get('/:type', async (req, res) => {
         }
       }
       const ds = _.sortBy(danhSachCuoiCung, ['thu', 'tiet'])
-      return res.render('tkb/tkb.html', { danhSachCuoiCung: ds })
+      console.log('================================================')
+      console.log('ds', ds)
+      console.log('================================================')
+      return res.render('tkb/tkb.html', {
+        danhSachCuoiCung: ds,
+        listTeacherNew
+      })
     case 'lop':
       const listClassNeww = await knex('lop').select()
       res.render(template, {
