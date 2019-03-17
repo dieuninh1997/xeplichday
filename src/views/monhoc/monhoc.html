@@ -34,7 +34,7 @@
           <select name="lop" id="select-lop">
             <option value="" disabled selected>Chọn lớp</option>
             {% for lop in listClass %}
-            <option value={{lop.id}}>{{lop.name}}</option>
+            <option value={{lop.id}}>{{lop.name}} - K{{lop.khoahoc}}</option>
             {% endfor %}
           </select>
           <label>Lớp</label>
