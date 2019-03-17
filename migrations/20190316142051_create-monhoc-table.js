@@ -4,8 +4,6 @@ exports.up = function (knex, Promise) {
     table.increments()
     table.string('name')
     table.integer('sotinchi')
-    table.integer('giangvien')
-    table.integer('lop')
     table.timestamp('created_at').defaultTo(knex.fn.now())
   })
 }

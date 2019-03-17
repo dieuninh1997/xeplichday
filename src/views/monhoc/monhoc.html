@@ -21,24 +21,6 @@
           </select>
           <label>Số tín chỉ</label>
         </div>
-        <div class="input-field col m6 s12">
-          <select name="giangvien" id="select-gv">
-            <option value="" disabled selected>Chọn giảng viên</option>
-            {% for teacher in listTeacher %}
-            <option value={{teacher.id}}>{{teacher.name}}</option>
-            {% endfor %}
-          </select>
-          <label>Giảng viên</label>
-        </div>
-        <div class="input-field col m6 s12">
-          <select name="lop" id="select-lop">
-            <option value="" disabled selected>Chọn lớp</option>
-            {% for lop in listClass %}
-            <option value={{lop.id}}>{{lop.name}} - K{{lop.khoahoc}}</option>
-            {% endfor %}
-          </select>
-          <label>Lớp</label>
-        </div>
       </div>
       <button class="btn waves-effect waves-light center btn-submit light-blue " type="submit">Thêm Môn Học
         <i class="material-icons right">send</i>
@@ -53,8 +35,6 @@
               <th>STT</th>
               <th>Môn học</th>
               <th>Số tín chỉ</th>
-              <th>Giảng viên</th>
-              <th>Lớp</th>
               <th>Hành động</th>
             </tr>
           </thead>
@@ -64,8 +44,6 @@
               <td>{{ loop.index }}</td>
               <td>{{ subject.name }}</td>
               <td>{{ subject.sotinchi }}</td>
-              <td>{{ subject.giangvien }}</td>
-              <td>{{ subject.lop }}</td>
               <td>
                 <a href="/edit/monhoc/{{ subject.id }}" class="waves-effect waves-light btn btn-small">
                   <i class="material-icons">edit</i>

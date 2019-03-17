@@ -5,20 +5,22 @@
 
   function pageHomeReady () {
     $('select').formSelect()
-    $('.tooltipped').tooltip()
 
     var $formAddGv = $('#form-add-gv')
     var $formAddLop = $('#form-add-lop')
     var $formAddMh = $('#form-add-mh')
+    var $formAddPCGD = $('#form-add-phanconggiangday')
     var numberOfTeacher = $formAddGv.data('number')
     var numberOfSubject = $formAddMh.data('number')
     var numberOfClass = $formAddLop.data('number')
     $formAddGv.on('submit', handleAddGv)
     $formAddLop.on('submit', handleAddLop)
     $formAddMh.on('submit', handleAddMh)
+    $formAddPCGD.on('submit', handleAddPCGD)
     $('body').on('click', '.btn-delete-gv', handleDeleteGv)
     $('body').on('click', '.btn-delete-lop', handleDeleteLop)
     $('body').on('click', '.btn-delete-mh', handleDeleteMh)
+    $('body').on('click', '.btn-delete-pcgd', handleDeletePCMH)
 
     function handleAddGv (event) {
       event.preventDefault()
@@ -39,7 +41,7 @@
               <td>${response.data.name}</td>
               <td>${response.data.note}</td>
               <td>
-                <a class="waves-effect waves-light btn btn-small" >
+                <a href="/edit/giangvien/${response.data.id}" class="waves-effect waves-light btn btn-small" >
                   <i class="material-icons">edit</i>
                 </a>
                 <a href="/giangvien/${response.data.id}" class="waves-effect waves-light btn btn-small red lighten-2 btn-delete-gv">
@@ -47,11 +49,6 @@
                 </a>
               </td>
             </tr>
-            `
-          )
-          $('#select-gv').append(
-            `
-            <option value=${response.data.id}>${response.data.name}</option>
             `
           )
           $('select').formSelect()
@@ -70,36 +67,19 @@
       if (!formData[1].value) {
         return showToastr('Khoá học là bắt buộc', true)
       }
+      if (!formData[2]) {
+        return showToastr('Vui lòng chọn buổi học', true)
+      }
 
       $.ajax({
         type: 'POST',
         url: $formAddLop.attr('action'),
         data: $formAddLop.serialize(),
         success: function (response) {
-          numberOfClass += 1
-          $('.lop-table-body').append(
-            `
-            <tr>
-              <td>${numberOfClass}</td>
-              <td>${response.data.name}</td>
-              <td>${response.data.khoahoc}</td>
-              <td>
-              <a class="waves-effect waves-light btn btn-small" >
-                <i class="material-icons">edit</i>
-              </a>
-              <a href="/lop/${response.data.id}" class="waves-effect waves-light btn btn-small red lighten-2 btn-delete-lop">
-                <i class="material-icons">delete</i>
-              </a>
-            </td>
-            </tr>
-            `
-          )
-          $('#select-lop').append(
-            `<option value=${response.data.id}>${response.data.name}</option>`
-          )
-          $('select').formSelect()
-          $formAddLop.trigger('reset')
           showToastr(response.message)
+          setTimeout(() => {
+            window.location.reload()
+          }, 1000)
         }
       })
     }
@@ -109,8 +89,6 @@
       var formData = $formAddMh.serializeArray()
       if (!formData[0].value) { return showToastr('Tên môn học là bắt buộc', true) }
       if (!formData[1]) { return showToastr('Vui lòng chọn số tín chỉ', true) }
-      if (!formData[2]) { return showToastr('Vui lòng chọn giảng viên', true) }
-      if (!formData[3]) { return showToastr('Vui lòng chọn lớp', true) }
 
       $.ajax({
         type: 'POST',
@@ -124,10 +102,8 @@
               <td>${numberOfSubject}</td>
               <td>${response.data.name}</td>
               <td>${response.data.sotinchi}</td>
-              <td>${response.data.giangvien}</td>
-              <td>${response.data.lop}</td>
               <td>
-                <a class="waves-effect waves-light btn btn-small" >
+                <a href="/edit/monhoc/${response.data.id}" class="waves-effect waves-light btn btn-small" >
                   <i class="material-icons">edit</i>
                 </a>
                 <a href="/monhoc/${response.data.id}" class="waves-effect waves-light btn btn-small red lighten-2 btn-delete-mh">
@@ -139,6 +115,26 @@
           )
           $formAddMh.trigger('reset')
           showToastr(response.message)
+        }
+      })
+    }
+
+    function handleAddPCGD (event) {
+      event.preventDefault()
+      var formData = $formAddPCGD.serializeArray()
+      if (!formData[0]) { return showToastr('Vui lòng chọn môn học', true) }
+      if (!formData[1]) { return showToastr('Vui lòng chọn giảng viên', true) }
+      if (!formData[1]) { return showToastr('Vui lòng chọn lớp', true) }
+
+      $.ajax({
+        type: 'POST',
+        url: $formAddPCGD.attr('action'),
+        data: $formAddPCGD.serialize(),
+        success: function (response) {
+          showToastr(response.message)
+          setTimeout(() => {
+            window.location.reload()
+          }, 1000)
         }
       })
     }
@@ -169,6 +165,9 @@
                   'Xoá thông tin thành công.',
                   'success'
                 )
+                setTimeout(() => {
+                  window.location.reload()
+                }, 2000)
               }
             }
           })
@@ -201,6 +200,9 @@
                   'Xoá thông tin thành công.',
                   'success'
                 )
+                setTimeout(() => {
+                  window.location.reload()
+                }, 2000)
               }
             }
           })
@@ -233,6 +235,43 @@
                   'Xoá thông tin thành công.',
                   'success'
                 )
+                setTimeout(() => {
+                  window.location.reload()
+                }, 2000)
+              }
+            }
+          })
+        }
+      })
+    }
+    function handleDeletePCMH (event) {
+      event.preventDefault()
+      window.Swal.fire({
+        title: 'Bạn có chắc không?',
+        text: 'Thông xin sẽ bị xoá vĩnh viễn!',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Huỷ',
+        confirmButtonText: 'Vâng, tiếp tục!'
+      }).then((result) => {
+        if (result.value) {
+          var currentBtn = $(event.currentTarget)
+          $.ajax({
+            type: 'DELETE',
+            url: currentBtn.attr('href'),
+            success: function (response) {
+              if (response.success) {
+                $(`#pcgd-${response.data.id}`).remove()
+                window.Swal.fire(
+                  'Thành công!',
+                  'Xoá thông tin thành công.',
+                  'success'
+                )
+                setTimeout(() => {
+                  window.location.reload()
+                }, 2000)
               }
             }
           })
