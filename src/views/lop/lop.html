@@ -35,6 +35,7 @@
           <tr>
             <th>STT</th>
             <th>Lớp</th>
+            <th>Mã lớp</th>
             <th>Khoá học</th>
             <th>Buổi học</th>
             <th>Hành động</th>
@@ -45,6 +46,7 @@
           <tr id="lop-{{lop.id}}">
             <td>{{ loop.index }}</td>
             <td>{{ lop.name }}</td>
+            <td>{{ lop.id }}</td>
             <td>{{ lop.khoahoc }}</td>
             <td>
               {% if lop.buoihoc == 's' %}

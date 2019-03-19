@@ -10,9 +10,6 @@
     var $formAddLop = $('#form-add-lop')
     var $formAddMh = $('#form-add-mh')
     var $formAddPCGD = $('#form-add-phanconggiangday')
-    var numberOfTeacher = $formAddGv.data('number')
-    var numberOfSubject = $formAddMh.data('number')
-    var numberOfClass = $formAddLop.data('number')
     $formAddGv.on('submit', handleAddGv)
     $formAddLop.on('submit', handleAddLop)
     $formAddMh.on('submit', handleAddMh)
@@ -33,27 +30,10 @@
         url: $formAddGv.attr('action'),
         data: $formAddGv.serialize(),
         success: function (response) {
-          numberOfTeacher += 1
-          $('.gv-table-body').append(
-            `
-            <tr id="giangvien-${response.data.id}">
-              <td>${numberOfTeacher}</td>
-              <td>${response.data.name}</td>
-              <td>${response.data.note}</td>
-              <td>
-                <a href="/edit/giangvien/${response.data.id}" class="waves-effect waves-light btn btn-small" >
-                  <i class="material-icons">edit</i>
-                </a>
-                <a href="/giangvien/${response.data.id}" class="waves-effect waves-light btn btn-small red lighten-2 btn-delete-gv">
-                  <i class="material-icons">delete</i>
-                </a>
-              </td>
-            </tr>
-            `
-          )
-          $('select').formSelect()
-          $formAddGv.trigger('reset')
           showToastr(response.message)
+          setTimeout(() => {
+            window.location.reload()
+          }, 1000)
         }
       })
     }
@@ -95,26 +75,10 @@
         url: $formAddMh.attr('action'),
         data: $formAddMh.serialize(),
         success: function (response) {
-          numberOfSubject += 1
-          $('.mh-table-body').append(
-            `
-            <tr id="monhoc-${response.data.id}">
-              <td>${numberOfSubject}</td>
-              <td>${response.data.name}</td>
-              <td>${response.data.sotinchi}</td>
-              <td>
-                <a href="/edit/monhoc/${response.data.id}" class="waves-effect waves-light btn btn-small" >
-                  <i class="material-icons">edit</i>
-                </a>
-                <a href="/monhoc/${response.data.id}" class="waves-effect waves-light btn btn-small red lighten-2 btn-delete-mh">
-                  <i class="material-icons">delete</i>
-                </a>
-              </td>
-            </tr>
-            `
-          )
-          $formAddMh.trigger('reset')
           showToastr(response.message)
+          setTimeout(() => {
+            window.location.reload()
+          }, 1000)
         }
       })
     }
@@ -158,7 +122,6 @@
             url: currentBtn.attr('href'),
             success: function (response) {
               if (response.success) {
-                numberOfTeacher -= 1
                 $(`#giangvien-${response.data.id}`).remove()
                 window.Swal.fire(
                   'Thành công!',
@@ -193,7 +156,6 @@
             url: currentBtn.attr('href'),
             success: function (response) {
               if (response.success) {
-                numberOfClass -= 1
                 $(`#lop-${response.data.id}`).remove()
                 window.Swal.fire(
                   'Thành công!',
@@ -228,7 +190,6 @@
             url: currentBtn.attr('href'),
             success: function (response) {
               if (response.success) {
-                numberOfSubject -= 1
                 $(`#monhoc-${response.data.id}`).remove()
                 window.Swal.fire(
                   'Thành công!',

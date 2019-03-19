@@ -6,8 +6,12 @@
       <h5 class="form-title">Thông tin môn học</h5>
       <div class="row">
         <div class="input-field col m6 s12">
-          <input id="first_name" type="text" class="validate" name="name" value="{{dataEdit.name}}">
-          <label for="first_name">Tên môn học</label>
+          <input id="tenmonhoc" type="text" class="validate" name="name" value="{{dataEdit.name}}">
+          <label for="tenmonhoc">Tên môn học</label>
+        </div>
+        <div class="input-field col m6 s12">
+          <input id="maaaaaaa" type="text" class="validate" name="mamonhoc" value="{{dataEdit.mamonhoc}}">
+          <label for="maaaaaaa">Mã môn học</label>
         </div>
         <div class="input-field col m6 s12">
           <select name="sotinchi">
@@ -20,24 +24,6 @@
           </select>
           <label>Số tín chỉ</label>
         </div>
-        <!-- <div class="input-field col m6 s12">
-          <select name="giangvien" id="select-gv">
-            <option value="" disabled>Chọn giảng viên</option>
-            {% for teacher in listTeacher %}
-            <option value="{{teacher.id}}" {% if dataEdit.giangvien == teacher.id %} selected {% endif %}>{{teacher.name}}</option>
-            {% endfor %}
-          </select>
-          <label>Giảng viên</label>
-        </div>
-        <div class="input-field col m6 s12">
-          <select name="lop" id="select-lop">
-            <option value="" disabled>Chọn lớp</option>
-            {% for lop in listClass %}
-            <option value="{{lop.id}}" {% if dataEdit.lop == lop.id %} selected {% endif %}>{{lop.name}} - K{{lop.khoahoc}}</option>
-            {% endfor %}
-          </select>
-          <label>Lớp</label>
-        </div> -->
       </div>
       <button class="btn waves-effect waves-light center btn-submit light-blue " type="submit">Cập nhật thông tin Môn Học
         <i class="material-icons right">send</i>

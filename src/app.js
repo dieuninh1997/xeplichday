@@ -214,7 +214,7 @@ app.get('/edit/:type/:id', async (req, res) => {
 app.post('/edit/:type/:id', async (req, res, next) => {
   try {
     const { type, id } = req.params
-    const { name, note, khoahoc, sotinchi, giangvien, lop, idmonhoc, idgiangvien, idlop } = req.body
+    const { name, note, khoahoc, sotinchi, giangvien, lop, idmonhoc, idgiangvien, idlop, mamonhoc } = req.body
     if (!id) { throw new Error('Không tìm thấy thông tin') }
     switch (type) {
       case 'giangvien':
@@ -223,8 +223,9 @@ app.post('/edit/:type/:id', async (req, res, next) => {
         return res.redirect('/')
       case 'monhoc':
         if (!name) { throw new Error('Tên môn học là bắt buộc') }
+        if (!mamonhoc) { throw new Error('Mã môn học là bắt buộc') }
         if (!sotinchi) { throw new Error('Vui lòng chọn số tín chỉ') }
-        await knex(type).where({ id }).update({ name, sotinchi })
+        await knex(type).where({ id }).update({ name, sotinchi, mamonhoc })
         return res.redirect('/monhoc')
       case 'phanconggiangday':
         if (!idmonhoc) { throw new Error('Tên môn học là bắt buộc') }
@@ -293,12 +294,13 @@ app.delete('/:type/:id', async (req, res, next) => {
 
 app.post('/monhoc', async (req, res, next) => {
   try {
-    const { name, sotinchi } = req.body
+    const { mamonhoc, name, sotinchi } = req.body
 
-    if (!name) { throw new Error('Tên lớp là bắt buộc') }
+    if (!name) { throw new Error('Tên môn học là bắt buộc') }
+    if (!mamonhoc) { throw new Error('Mã môn học là bắt buộc') }
     if (!sotinchi) { throw new Error('Số tín chỉ là bắt buộc') }
 
-    const idRow = await knex('monhoc').insert({ name, sotinchi })
+    const idRow = await knex('monhoc').insert({ mamonhoc, name, sotinchi })
     const infoMh = await knex('monhoc').select().where('id', idRow[0]).first()
 
     res.json({

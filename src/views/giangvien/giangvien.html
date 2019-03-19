@@ -28,6 +28,7 @@
             <tr>
               <th>STT</th>  
               <th>Giảng Viên</th>
+              <th>Mã giảng viên</th>
               <th>Ghi Chú</th>
               <th>Hành Động</th>
             </tr>
@@ -37,6 +38,7 @@
             <tr id="giangvien-{{teacher.id}}">
               <td>{{ loop.index }}</td>
               <td>{{ teacher.name }}</td>
+              <td>{{ teacher.id }}</td>
               <td>{{ teacher.note }}</td>
               <td>
                 <a href="/edit/giangvien/{{ teacher.id }}" class="waves-effect waves-light btn btn-small">
