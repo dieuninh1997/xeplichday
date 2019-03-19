@@ -302,6 +302,10 @@ app.post('/monhoc', async (req, res, next) => {
     if (!name) { throw new Error('Tên môn học là bắt buộc') }
     if (!mamonhoc) { throw new Error('Mã môn học là bắt buộc') }
     if (!sotinchi) { throw new Error('Số tín chỉ là bắt buộc') }
+    const listMonTheoMa = await knex('monhoc').select().where('mamonhoc', mamonhoc)
+    if (listMonTheoMa.length) {
+      throw new Error('Mã môn học đã tồn tại')
+    }
 
     const idRow = await knex('monhoc').insert({ mamonhoc, name, sotinchi })
     const infoMh = await knex('monhoc').select().where('id', idRow[0]).first()

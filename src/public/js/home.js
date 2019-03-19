@@ -75,10 +75,14 @@
         url: $formAddMh.attr('action'),
         data: $formAddMh.serialize(),
         success: function (response) {
-          showToastr(response.message)
-          setTimeout(() => {
-            window.location.reload()
-          }, 1000)
+          if (response.success) {
+            showToastr(response.message)
+            setTimeout(() => {
+              window.location.reload()
+            }, 1000)
+            return
+          }
+          showToastr(response.message, true)
         }
       })
     }
