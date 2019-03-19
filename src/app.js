@@ -18,12 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 app.get('/', async (req, res) => {
-  const listTeacher = await knex('giangvien').select()
-
-  res.render('giangvien/giangvien.html', {
-    listTeacher,
-    numberOfTeacher: listTeacher.length
-  })
+  res.render('home/home.html')
 })
 
 function filterTkb (tkb) {
@@ -72,6 +67,14 @@ app.get('/:type', async (req, res) => {
   const { type } = req.params
   const template = `${type}/${type}.html`
   switch (type) {
+    case 'giangvien':
+      const listTeacher = await knex('giangvien').select()
+
+      res.render(template, {
+        listTeacher,
+        numberOfTeacher: listTeacher.length
+      })
+      return
     case 'monhoc':
       const [listSubject] = await Promise.all([
         await knex('monhoc').select()
