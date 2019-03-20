@@ -63,6 +63,21 @@ function filterTkb (tkb) {
     tkbTiet10
   ]
 }
+
+function filterTkbNew (tkb) {
+  return [
+    _.filter(tkb, { tiet: 1 }),
+    _.filter(tkb, { tiet: 2 }),
+    _.filter(tkb, { tiet: 3 }),
+    _.filter(tkb, { tiet: 4 }),
+    _.filter(tkb, { tiet: 5 }),
+    _.filter(tkb, { tiet: 6 }),
+    _.filter(tkb, { tiet: 7 }),
+    _.filter(tkb, { tiet: 8 }),
+    _.filter(tkb, { tiet: 9 }),
+    _.filter(tkb, { tiet: 10 })
+  ]
+}
 app.get('/:type', async (req, res) => {
   const { type } = req.params
   const template = `${type}/${type}.html`
@@ -109,68 +124,174 @@ app.get('/:type', async (req, res) => {
       break
     case 'tkb':
       const { giangvien } = req.query
-      const [listTeacherNew, listClassNew, listSubjectNew] = await Promise.all([
+      const [listTeacherNew, listClassNew, listSubjectNew, listPhanCongGiangDayNew] = await Promise.all([
         await knex('giangvien').select(),
         await knex('lop').select(),
-        await knex('monhoc').select()
+        await knex('monhoc').select(),
+        await knex('phanconggiangday').select()
       ])
-      const thoiGianHoc = [{ k: '65', value: 's' }, { k: '66', value: 'c' }, { k: '67', value: 's' }, { k: '68', value: 'c' }]
-      const danhSachCuoiCung = []
-      for (let index = 0; index < listSubjectNew.length; index++) {
-        const subject = listSubjectNew[index]
-        const idLopHoc = subject.lop
-        const lopHoc = _.filter(listClassNew, { id: idLopHoc })
-        const buoiHoc = _.filter(thoiGianHoc, { k: lopHoc[0].khoahoc })
-        const buoiHocDuocPhep = buoiHoc[0].value
+      const danhSachThuHoc = [2, 3, 4, 5, 6]
+      const danhTietHocTrongNgay = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-        for (let sotinchi = 1; sotinchi <= subject.sotinchi; sotinchi++) {
-          const danhSachThuHoc = ['2', '3', '4', '5', '6']
-          let danhSachTietHoc = []
-          if (buoiHocDuocPhep === 's') {
-            danhSachTietHoc = [1, 2, 3, 4, 5]
-          } else {
-            danhSachTietHoc = [6, 7, 8, 9, 10]
-          }
-          let dsTietHocTheoTinChi = []
-          for (let i = 0; i < 5 - sotinchi + 1; i++) {
-            const pairTietHoc = {
-              tietBatDau: danhSachTietHoc[i],
-              tietKetThuc: danhSachTietHoc[i + sotinchi - 1]
+      // Tao mang A phan cong mon hoc: { idgiangvien: 2, idmonhoc: 2, idlop: 2, duocdaylop: 0 }
+      const A = []
+      for (let giangvien = 0; giangvien < listTeacherNew.length; giangvien++) {
+        for (let monhoc = 0; monhoc < listSubjectNew.length; monhoc++) {
+          for (let lop = 0; lop < listClassNew.length; lop++) {
+            const filter = {
+              idgiangvien: listTeacherNew[giangvien].id,
+              idmonhoc: listSubjectNew[monhoc].id,
+              idlop: listClassNew[lop].id
             }
-            dsTietHocTheoTinChi.push(pairTietHoc)
+            const phanCong = _.filter(listPhanCongGiangDayNew, filter)
+            if (phanCong.length) {
+              A.push({ ...filter, duocdaylop: 0 }) // 0 là được dạy lớp này
+            } else {
+              A.push({ ...filter, duocdaylop: 1 }) // 1 là không được dạy lớp này
+            }
           }
+        }
+      }
 
-          const indexTietHoc = Math.floor(Math.random() * dsTietHocTheoTinChi.length)
-          const indexThuHoc = Math.floor(Math.random() * danhSachThuHoc.length)
+      const L = []
+      // Tao mang L thời gian có thể học của lớp: { idlop: 2, thu: 2, tiet: 1, duocdaytiet: 0 }
+      for (let lop = 0; lop < listClassNew.length; lop++) {
+        for (let thuhoc = 0; thuhoc < danhSachThuHoc.length; thuhoc++) {
+          for (let tiethoc = 0; tiethoc < danhTietHocTrongNgay.length; tiethoc++) {
+            if (listClassNew[lop].buoihoc === 's') {
+              if (danhTietHocTrongNgay[tiethoc] >= 1 && danhTietHocTrongNgay[tiethoc] <= 5) {
+                L.push({
+                  idlop: listClassNew[lop].id,
+                  thu: danhSachThuHoc[thuhoc],
+                  tiet: danhTietHocTrongNgay[tiethoc],
+                  duocdaytiet: 0 // 0 là được dạy tiết này
+                })
+              } else {
+                L.push({
+                  idlop: listClassNew[lop].id,
+                  thu: danhSachThuHoc[thuhoc],
+                  tiet: danhTietHocTrongNgay[tiethoc],
+                  duocdaytiet: 1 // 1 là không được dạy tiết này
+                })
+              }
+            } else {
+              if (danhTietHocTrongNgay[tiethoc] >= 1 && danhTietHocTrongNgay[tiethoc] <= 5) {
+                L.push({
+                  idlop: listClassNew[lop].id,
+                  thu: danhSachThuHoc[thuhoc],
+                  tiet: danhTietHocTrongNgay[tiethoc],
+                  duocdaytiet: 1 // 1 là không được dạy tiết này
+                })
+              } else {
+                L.push({
+                  idlop: listClassNew[lop].id,
+                  thu: danhSachThuHoc[thuhoc],
+                  tiet: danhTietHocTrongNgay[tiethoc],
+                  duocdaytiet: 0 // 0 là được dạy tiết này
+                })
+              }
+            }
+          }
+        }
+      }
 
-          danhSachCuoiCung.push({
-            ...subject,
-            thu: danhSachThuHoc[indexThuHoc],
-            ...dsTietHocTheoTinChi[indexTietHoc],
-            lop: lopHoc[0],
-            buoiHocDuocPhep
+      // Tạo mảng X biểu diễn khả năng giảng viên P được dạy môn S lớp C thứ D tiết T
+      // A - { idgiangvien: 2, idmonhoc: 2, idlop: 2, duocdaylop: 1 } L - { idlop: 2, thu: 2, tiet: 1, duocdaytiet: 0 }
+      const X = []
+      for (let index = 0; index < A.length; index++) {
+        const listLop = _.filter(L, { idlop: A[index].idlop })
+        for (let indexLop = 0; indexLop < listLop.length; indexLop++) {
+          // if (A[index].duocdaylop === 0) { // Được dạy lớp này
+          //   if (listLop[indexLop].duocdaytiet === 0) { // Được dạy tiết này
+          //     X.push({
+          //       ...A[index],
+          //       ...listLop[indexLop],
+          //       duocdayloptaitiet: 1 // 1 Là được dạy lớp này tại tiết này
+          //     })
+          //   } else {
+          //     X.push({
+          //       ...A[index],
+          //       ...listLop[indexLop],
+          //       duocdayloptaitiet: 0 // 0 Là không được dạy lớp này tại tiết này
+          //     })
+          //   }
+          // } else {
+          //   X.push({
+          //     ...A[index],
+          //     ...listLop[indexLop],
+          //     duocdayloptaitiet: 0 // 0 Là không được dạy lớp này tại tiết này
+          //   })
+          // }
+          X.push({
+            ...A[index],
+            ...listLop[indexLop],
+            duocdayloptaitiet: 0 // 1 Là được dạy lớp này tại tiết này
           })
         }
       }
-      let danhsachDuocSapXep = _.sortBy(danhSachCuoiCung, ['thu', 'tiet'])
+
+      // For mảng A phân công giảng dạy : 0 được dạy - 1 không được dạy ({ idgiangvien: 2, idmonhoc: 2, idlop: 2, duocdaylop: 0 })
+      for (let index = 0; index < A.length; index++) {
+        if (A[index].duocdaylop === 0) {
+          const phanCongGiangDayHientai = A[index] // có P, S, C
+          const thongtinmonhochientai = _.filter(listSubjectNew, { id: phanCongGiangDayHientai.idmonhoc })[0]
+          const thongtinlophientai = _.filter(listClassNew, { id: phanCongGiangDayHientai.idlop })[0]
+          for (let tinchi = 1; tinchi <= thongtinmonhochientai.sotinchi; tinchi++) {
+            let KT = true
+            while (KT) {
+              let danhSachTietHoc = []
+              if (thongtinlophientai.buoihoc === 's') {
+                danhSachTietHoc = [1, 2, 3, 4, 5]
+              } else {
+                danhSachTietHoc = [6, 7, 8, 9, 10]
+              }
+              const tietHocRandom = danhSachTietHoc[Math.floor(Math.random() * 5)]
+              const thuhocRandom = danhSachThuHoc[Math.floor(Math.random() * 5)]
+              const filterL = {
+                idlop: thongtinlophientai.id,
+                thu: thuhocRandom,
+                tiet: tietHocRandom,
+                duocdaytiet: 0
+              }
+              const kiemtratiethoccualoptaithu = _.filter(L, filterL) // L { idlop: 2, thu: 2, tiet: 1, duocdaytiet: 0 }
+              if (kiemtratiethoccualoptaithu.length) {
+                const Xpsctd = _.filter(X, { ...phanCongGiangDayHientai, ...kiemtratiethoccualoptaithu[0] })
+
+                if (Xpsctd[0].duocdayloptaitiet === 0) {
+                  const indexOfXpsctd = X.indexOf(Xpsctd[0])
+                  X[indexOfXpsctd] = {
+                    ...Xpsctd[0], duocdayloptaitiet: 1
+                  }
+                  KT = false
+                }
+              } else {
+                KT = true
+              }
+            }
+          }
+        }
+      }
+
+      let danhsachDuocSapXep = _.sortBy(X, ['thu', 'tiet'])
       let thongTinGiangVien
       if (giangvien) {
-        danhsachDuocSapXep = _.filter(danhsachDuocSapXep, { giangvien: parseInt(giangvien) })
+        danhsachDuocSapXep = _.filter(danhsachDuocSapXep, { idgiangvien: parseInt(giangvien), duocdayloptaitiet: 1 })
         thongTinGiangVien = _.filter(listTeacherNew, { id: parseInt(giangvien) })[0]
       }
-      const tkbThu2 = _.filter(danhsachDuocSapXep, { thu: '2' })
-      const tkbThu3 = _.filter(danhsachDuocSapXep, { thu: '3' })
-      const tkbThu4 = _.filter(danhsachDuocSapXep, { thu: '4' })
-      const tkbThu5 = _.filter(danhsachDuocSapXep, { thu: '5' })
-      const tkbThu6 = _.filter(danhsachDuocSapXep, { thu: '6' })
+      const tkbThu2 = _.filter(danhsachDuocSapXep, { thu: 2 })
+      const tkbThu3 = _.filter(danhsachDuocSapXep, { thu: 3 })
+      const tkbThu4 = _.filter(danhsachDuocSapXep, { thu: 4 })
+      const tkbThu5 = _.filter(danhsachDuocSapXep, { thu: 5 })
+      const tkbThu6 = _.filter(danhsachDuocSapXep, { thu: 6 })
 
       const danhSachTkb = {
-        thuHai: filterTkb(tkbThu2),
-        thuBa: filterTkb(tkbThu3),
-        thuTu: filterTkb(tkbThu4),
-        thuNam: filterTkb(tkbThu5),
-        thuSau: filterTkb(tkbThu6)
+        thuHai: filterTkbNew(tkbThu2),
+        thuBa: filterTkbNew(tkbThu3),
+        thuTu: filterTkbNew(tkbThu4),
+        thuNam: filterTkbNew(tkbThu5),
+        thuSau: filterTkbNew(tkbThu6)
       }
+
       return res.render('tkb/tkb.html', {
         danhSachTkb,
         listTeacherNew,
