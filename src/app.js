@@ -277,26 +277,34 @@ app.get('/:type', async (req, res) => {
       if (giangvien) {
         danhsachDuocSapXep = _.filter(danhsachDuocSapXep, { idgiangvien: parseInt(giangvien), duocdayloptaitiet: 1 })
         thongTinGiangVien = _.filter(listTeacherNew, { id: parseInt(giangvien) })[0]
-      }
-      const tkbThu2 = _.filter(danhsachDuocSapXep, { thu: 2 })
-      const tkbThu3 = _.filter(danhsachDuocSapXep, { thu: 3 })
-      const tkbThu4 = _.filter(danhsachDuocSapXep, { thu: 4 })
-      const tkbThu5 = _.filter(danhsachDuocSapXep, { thu: 5 })
-      const tkbThu6 = _.filter(danhsachDuocSapXep, { thu: 6 })
 
-      const danhSachTkb = {
-        thuHai: filterTkbNew(tkbThu2),
-        thuBa: filterTkbNew(tkbThu3),
-        thuTu: filterTkbNew(tkbThu4),
-        thuNam: filterTkbNew(tkbThu5),
-        thuSau: filterTkbNew(tkbThu6)
+        const tkbThu2 = _.filter(danhsachDuocSapXep, { thu: 2 })
+        const tkbThu3 = _.filter(danhsachDuocSapXep, { thu: 3 })
+        const tkbThu4 = _.filter(danhsachDuocSapXep, { thu: 4 })
+        const tkbThu5 = _.filter(danhsachDuocSapXep, { thu: 5 })
+        const tkbThu6 = _.filter(danhsachDuocSapXep, { thu: 6 })
+
+        const danhSachTkb = {
+          thuHai: filterTkbNew(tkbThu2),
+          thuBa: filterTkbNew(tkbThu3),
+          thuTu: filterTkbNew(tkbThu4),
+          thuNam: filterTkbNew(tkbThu5),
+          thuSau: filterTkbNew(tkbThu6)
+        }
+
+        return res.render('tkb/tkb.html', {
+          danhSachTkb,
+          listTeacherNew,
+          giangvien: thongTinGiangVien
+        })
+      } else {
+        return res.render('tkb/tkb.html', {
+          // danhSachTkb,
+          listTeacherNew
+          // giangvien: thongTinGiangVien
+        })
       }
 
-      return res.render('tkb/tkb.html', {
-        danhSachTkb,
-        listTeacherNew,
-        giangvien: thongTinGiangVien
-      })
     case 'lop':
       const listClassNeww = await knex('lop').select()
       res.render(template, {
