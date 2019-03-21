@@ -21,49 +21,6 @@ app.get('/', async (req, res) => {
   res.render('home/home.html')
 })
 
-function filterTkb (tkb) {
-  const tkbTiet1 = _.filter(tkb, { tietBatDau: 1 })
-  const tkbTiet2 = _.filter(tkb, (item) => {
-    return (item.tietBatDau > 1 && item.tietBatDau < 3) || (item.tietKetThuc > 1 && item.tietKetThuc < 3)
-  })
-  const tkbTiet3 = _.filter(tkb, (item) => {
-    return (item.tietBatDau > 2 && item.tietBatDau < 4) || (item.tietKetThuc > 2 && item.tietKetThuc < 4)
-  })
-  const tkbTiet4 = _.filter(tkb, (item) => {
-    return (item.tietBatDau > 3 && item.tietBatDau < 5) || (item.tietKetThuc > 3 && item.tietKetThuc < 5)
-  })
-  const tkbTiet5 = _.filter(tkb, (item) => {
-    return (item.tietBatDau > 4 && item.tietBatDau < 6) || (item.tietKetThuc > 4 && item.tietKetThuc < 6)
-  })
-  const tkbTiet6 = _.filter(tkb, (item) => {
-    return (item.tietBatDau > 5 && item.tietBatDau < 7) || (item.tietKetThuc > 5 && item.tietKetThuc < 7)
-  })
-  const tkbTiet7 = _.filter(tkb, (item) => {
-    return (item.tietBatDau > 6 && item.tietBatDau < 8) || (item.tietKetThuc > 6 && item.tietKetThuc < 8)
-  })
-  const tkbTiet8 = _.filter(tkb, (item) => {
-    return (item.tietBatDau > 7 && item.tietBatDau < 9) || (item.tietKetThuc > 7 && item.tietKetThuc < 9)
-  })
-  const tkbTiet9 = _.filter(tkb, (item) => {
-    return (item.tietBatDau > 8 && item.tietBatDau < 10) || (item.tietKetThuc > 8 && item.tietKetThuc < 10)
-  })
-  const tkbTiet10 = _.filter(tkb, (item) => {
-    return (item.tietBatDau > 9 && item.tietBatDau < 11) || (item.tietKetThuc > 9 && item.tietKetThuc < 11)
-  })
-  return [
-    tkbTiet1,
-    tkbTiet2,
-    tkbTiet3,
-    tkbTiet4,
-    tkbTiet5,
-    tkbTiet6,
-    tkbTiet7,
-    tkbTiet8,
-    tkbTiet9,
-    tkbTiet10
-  ]
-}
-
 function filterTkbNew (tkb) {
   return [
     _.filter(tkb, { tiet: 1 }),
@@ -201,27 +158,6 @@ app.get('/:type', async (req, res) => {
       for (let index = 0; index < A.length; index++) {
         const listLop = _.filter(L, { idlop: A[index].idlop })
         for (let indexLop = 0; indexLop < listLop.length; indexLop++) {
-          // if (A[index].duocdaylop === 0) { // Được dạy lớp này
-          //   if (listLop[indexLop].duocdaytiet === 0) { // Được dạy tiết này
-          //     X.push({
-          //       ...A[index],
-          //       ...listLop[indexLop],
-          //       duocdayloptaitiet: 1 // 1 Là được dạy lớp này tại tiết này
-          //     })
-          //   } else {
-          //     X.push({
-          //       ...A[index],
-          //       ...listLop[indexLop],
-          //       duocdayloptaitiet: 0 // 0 Là không được dạy lớp này tại tiết này
-          //     })
-          //   }
-          // } else {
-          //   X.push({
-          //     ...A[index],
-          //     ...listLop[indexLop],
-          //     duocdayloptaitiet: 0 // 0 Là không được dạy lớp này tại tiết này
-          //   })
-          // }
           X.push({
             ...A[index],
             ...listLop[indexLop],
