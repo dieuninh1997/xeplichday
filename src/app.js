@@ -163,66 +163,6 @@ app.get('/:type', async (req, res) => {
         numberOfSuject: listSubjectGiangDay.length
       })
       break
-
-    case 'tkb':
-      const { giangvien } = req.query
-      const [listTeacherNew, listClassNew, listSubjectNew] = await Promise.all([
-        await knex('giangvien').select(),
-        await knex('lop').select(),
-        await knex('monhoc').select()
-      ])
-
-      const tkb = await knex('xrandom').select().where('id', 2).first()
-      const tkbCuoi = JSON.parse(tkb.value)
-      let danhsachDuocSapXep = _.sortBy(tkbCuoi, ['thu', 'tiet'])
-      let tkbThemThongTin = []
-      for (let thongtin = 0; thongtin < danhsachDuocSapXep.length; thongtin++) {
-        const thongtinhientai = danhsachDuocSapXep[thongtin]
-        const thongtinGiangVien = _.filter(listTeacherNew, { id: thongtinhientai.idgiangvien })[0]
-        const thongtinLop = _.filter(listClassNew, { id: thongtinhientai.idlop })[0]
-        const thongtinMonHoc = _.filter(listSubjectNew, { id: thongtinhientai.idmonhoc })[0]
-        tkbThemThongTin.push({
-          ...thongtinhientai,
-          thongtinGiangVien,
-          thongtinLop,
-          thongtinMonHoc
-        })
-      }
-
-      let thongTinGiangVien
-      if (giangvien) {
-        tkbThemThongTin = _.filter(tkbThemThongTin, { idgiangvien: parseInt(giangvien) })
-        thongTinGiangVien = _.filter(listTeacherNew, { id: parseInt(giangvien) })[0]
-
-        const tkbThu2 = _.filter(tkbThemThongTin, { thu: 2 })
-        const tkbThu3 = _.filter(tkbThemThongTin, { thu: 3 })
-        const tkbThu4 = _.filter(tkbThemThongTin, { thu: 4 })
-        const tkbThu5 = _.filter(tkbThemThongTin, { thu: 5 })
-        const tkbThu6 = _.filter(tkbThemThongTin, { thu: 6 })
-
-        const danhSachTkb = {
-          thuHai: filterTkbNew(tkbThu2),
-          thuBa: filterTkbNew(tkbThu3),
-          thuTu: filterTkbNew(tkbThu4),
-          thuNam: filterTkbNew(tkbThu5),
-          thuSau: filterTkbNew(tkbThu6)
-        }
-        console.log('================================================')
-        console.log('danhSachTkb', danhSachTkb.thuHai)
-        console.log('================================================')
-        return res.render('tkb/tkb.html', {
-          danhSachTkb,
-          listTeacherNew,
-          giangvien: thongTinGiangVien
-        })
-      } else {
-        return res.render('tkb/tkb.html', {
-          // danhSachTkb,
-          listTeacherNew
-          // giangvien: thongTinGiangVien
-        })
-      }
-
     case 'lop':
       const listClassNeww = await knex('lop').select()
       res.render(template, {
@@ -405,6 +345,124 @@ app.get('/tkb/sinhtkb', async (req, res) => {
   console.log('================================================')
 
   return res.redirect('/tkb/sinhtkb')
+})
+
+app.get('/tkb/giangvien', async (req, res) => {
+  try {
+    const { giangvien = 2 } = req.query
+    const [listTeacherNew, listClassNew, listSubjectNew] = await Promise.all([
+      await knex('giangvien').select(),
+      await knex('lop').select(),
+      await knex('monhoc').select()
+    ])
+
+    const tkb = await knex('xrandom').select().where('id', 2).first()
+    const tkbCuoi = JSON.parse(tkb.value)
+    let danhsachDuocSapXep = _.sortBy(tkbCuoi, ['thu', 'tiet'])
+    let tkbThemThongTin = []
+    for (let thongtin = 0; thongtin < danhsachDuocSapXep.length; thongtin++) {
+      const thongtinhientai = danhsachDuocSapXep[thongtin]
+      const thongtinGiangVien = _.filter(listTeacherNew, { id: thongtinhientai.idgiangvien })[0]
+      const thongtinLop = _.filter(listClassNew, { id: thongtinhientai.idlop })[0]
+      const thongtinMonHoc = _.filter(listSubjectNew, { id: thongtinhientai.idmonhoc })[0]
+      tkbThemThongTin.push({
+        ...thongtinhientai,
+        thongtinGiangVien,
+        thongtinLop,
+        thongtinMonHoc
+      })
+    }
+
+    let thongTinGiangVien
+    if (giangvien) {
+      tkbThemThongTin = _.filter(tkbThemThongTin, { idgiangvien: parseInt(giangvien) })
+      thongTinGiangVien = _.filter(listTeacherNew, { id: parseInt(giangvien) })[0]
+
+      const tkbThu2 = _.filter(tkbThemThongTin, { thu: 2 })
+      const tkbThu3 = _.filter(tkbThemThongTin, { thu: 3 })
+      const tkbThu4 = _.filter(tkbThemThongTin, { thu: 4 })
+      const tkbThu5 = _.filter(tkbThemThongTin, { thu: 5 })
+      const tkbThu6 = _.filter(tkbThemThongTin, { thu: 6 })
+
+      const danhSachTkb = {
+        thuHai: filterTkbNew(tkbThu2),
+        thuBa: filterTkbNew(tkbThu3),
+        thuTu: filterTkbNew(tkbThu4),
+        thuNam: filterTkbNew(tkbThu5),
+        thuSau: filterTkbNew(tkbThu6)
+      }
+      return res.render('tkb/tkb.html', {
+        danhSachTkb,
+        listTeacherNew,
+        giangvien: thongTinGiangVien
+      })
+    }
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+      data: error
+    })
+  }
+})
+
+app.get('/tkb/lop', async (req, res) => {
+  try {
+    const { lop = 2 } = req.query
+    const [listTeacherNew, listClassNew, listSubjectNew] = await Promise.all([
+      await knex('giangvien').select(),
+      await knex('lop').select(),
+      await knex('monhoc').select()
+    ])
+
+    const tkb = await knex('xrandom').select().where('id', 2).first()
+    const tkbCuoi = JSON.parse(tkb.value)
+    let danhsachDuocSapXep = _.sortBy(tkbCuoi, ['thu', 'tiet'])
+    let tkbThemThongTin = []
+    for (let thongtin = 0; thongtin < danhsachDuocSapXep.length; thongtin++) {
+      const thongtinhientai = danhsachDuocSapXep[thongtin]
+      const thongtinGiangVien = _.filter(listTeacherNew, { id: thongtinhientai.idgiangvien })[0]
+      const thongtinLop = _.filter(listClassNew, { id: thongtinhientai.idlop })[0]
+      const thongtinMonHoc = _.filter(listSubjectNew, { id: thongtinhientai.idmonhoc })[0]
+      tkbThemThongTin.push({
+        ...thongtinhientai,
+        thongtinGiangVien,
+        thongtinLop,
+        thongtinMonHoc
+      })
+    }
+
+    let thongTinLop
+    if (lop) {
+      tkbThemThongTin = _.filter(tkbThemThongTin, { idlop: parseInt(lop) })
+      thongTinLop = _.filter(listClassNew, { id: parseInt(lop) })[0]
+
+      const tkbThu2 = _.filter(tkbThemThongTin, { thu: 2 })
+      const tkbThu3 = _.filter(tkbThemThongTin, { thu: 3 })
+      const tkbThu4 = _.filter(tkbThemThongTin, { thu: 4 })
+      const tkbThu5 = _.filter(tkbThemThongTin, { thu: 5 })
+      const tkbThu6 = _.filter(tkbThemThongTin, { thu: 6 })
+
+      const danhSachTkb = {
+        thuHai: filterTkbNew(tkbThu2),
+        thuBa: filterTkbNew(tkbThu3),
+        thuTu: filterTkbNew(tkbThu4),
+        thuNam: filterTkbNew(tkbThu5),
+        thuSau: filterTkbNew(tkbThu6)
+      }
+      return res.render('tkb/tkb-lop.html', {
+        danhSachTkb,
+        listClassNew,
+        lop: thongTinLop
+      })
+    }
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: error.message,
+      data: error
+    })
+  }
 })
 
 app.get('/edit/:type/:id', async (req, res) => {
