@@ -404,7 +404,7 @@ app.get('/tkb/sinhtkb', async (req, res) => {
   console.log('Da them ', listDone)
   console.log('================================================')
 
-  return res.redirect('/')
+  return res.redirect('/tkb/sinhtkb')
 })
 
 app.get('/edit/:type/:id', async (req, res) => {
