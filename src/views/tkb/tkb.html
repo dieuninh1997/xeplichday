@@ -41,7 +41,7 @@
           {% for thuHai in danhSachTkb.thuHai %}
           <td>
             {% for monHocTheoTiet in thuHai %}
-            <div>Môn: {{monHocTheoTiet.idmonhoc}} - Lớp: {{monHocTheoTiet.idlop}}</div>
+            <div><strong>Môn:</strong> {{monHocTheoTiet.thongtinMonHoc.name}} </br><strong>Lớp:</strong> K{{monHocTheoTiet.thongtinLop.khoahoc}}{{monHocTheoTiet.thongtinLop.name}}</div>
             {% endfor %}
           </td>
           {% endfor %}
@@ -51,8 +51,8 @@
           {% for thuBa in danhSachTkb.thuBa %}
           <td>
             {% for monHocTheoTiet in thuBa %}
-            <div>Môn: {{monHocTheoTiet.idmonhoc}} - Lớp: {{monHocTheoTiet.idlop}}</div>
-            {% endfor %}
+
+<div><strong>Môn:</strong> {{monHocTheoTiet.thongtinMonHoc.name}} </br><strong>Lớp:</strong> K{{monHocTheoTiet.thongtinLop.khoahoc}}{{monHocTheoTiet.thongtinLop.name}}</div>            {% endfor %}
           </td>
           {% endfor %}
         </tr>
@@ -61,8 +61,8 @@
           {% for thuTu in danhSachTkb.thuTu %}
           <td>
             {% for monHocTheoTiet in thuTu %}
-            <div>Môn: {{monHocTheoTiet.idmonhoc}} - Lớp: {{monHocTheoTiet.idlop}}</div>
-            {% endfor %}
+
+<div><strong>Môn:</strong> {{monHocTheoTiet.thongtinMonHoc.name}} </br><strong>Lớp:</strong> K{{monHocTheoTiet.thongtinLop.khoahoc}}{{monHocTheoTiet.thongtinLop.name}}</div>            {% endfor %}
           </td>
           {% endfor %}
         </tr>
@@ -71,7 +71,7 @@
           {% for thuNam in danhSachTkb.thuNam %}
           <td>
             {% for monHocTheoTiet in thuNam %}
-            <div>Môn: {{monHocTheoTiet.idmonhoc}} - Lớp: {{monHocTheoTiet.idlop}}</div>
+            <div><strong>Môn:</strong> {{monHocTheoTiet.thongtinMonHoc.name}} </br><strong>Lớp:</strong> K{{monHocTheoTiet.thongtinLop.khoahoc}}{{monHocTheoTiet.thongtinLop.name}}</div>
             {% endfor %}
           </td>
           {% endfor %}
@@ -81,7 +81,7 @@
           {% for thuSau in danhSachTkb.thuSau %}
           <td>
             {% for monHocTheoTiet in thuSau %}
-            <div>Môn: {{monHocTheoTiet.idmonhoc}} - Lớp: {{monHocTheoTiet.idlop}}</div>
+            <div><strong>Môn:</strong> {{monHocTheoTiet.thongtinMonHoc.name}} </br><strong>Lớp:</strong> K{{monHocTheoTiet.thongtinLop.khoahoc}}{{monHocTheoTiet.thongtinLop.name}}</div>
             {% endfor %}
           </td>
           {% endfor %}

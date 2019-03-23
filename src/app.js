@@ -166,22 +166,39 @@ app.get('/:type', async (req, res) => {
 
     case 'tkb':
       const { giangvien } = req.query
-      const [listTeacherNew] = await Promise.all([
-        await knex('giangvien').select()
+      const [listTeacherNew, listClassNew, listSubjectNew] = await Promise.all([
+        await knex('giangvien').select(),
+        await knex('lop').select(),
+        await knex('monhoc').select()
       ])
+
       const tkb = await knex('xrandom').select().where('id', 2).first()
       const tkbCuoi = JSON.parse(tkb.value)
       let danhsachDuocSapXep = _.sortBy(tkbCuoi, ['thu', 'tiet'])
+      let tkbThemThongTin = []
+      for (let thongtin = 0; thongtin < danhsachDuocSapXep.length; thongtin++) {
+        const thongtinhientai = danhsachDuocSapXep[thongtin]
+        const thongtinGiangVien = _.filter(listTeacherNew, { id: thongtinhientai.idgiangvien })[0]
+        const thongtinLop = _.filter(listClassNew, { id: thongtinhientai.idlop })[0]
+        const thongtinMonHoc = _.filter(listSubjectNew, { id: thongtinhientai.idmonhoc })[0]
+        tkbThemThongTin.push({
+          ...thongtinhientai,
+          thongtinGiangVien,
+          thongtinLop,
+          thongtinMonHoc
+        })
+      }
+
       let thongTinGiangVien
       if (giangvien) {
-        danhsachDuocSapXep = _.filter(danhsachDuocSapXep, { idgiangvien: parseInt(giangvien) })
+        tkbThemThongTin = _.filter(tkbThemThongTin, { idgiangvien: parseInt(giangvien) })
         thongTinGiangVien = _.filter(listTeacherNew, { id: parseInt(giangvien) })[0]
 
-        const tkbThu2 = _.filter(danhsachDuocSapXep, { thu: 2 })
-        const tkbThu3 = _.filter(danhsachDuocSapXep, { thu: 3 })
-        const tkbThu4 = _.filter(danhsachDuocSapXep, { thu: 4 })
-        const tkbThu5 = _.filter(danhsachDuocSapXep, { thu: 5 })
-        const tkbThu6 = _.filter(danhsachDuocSapXep, { thu: 6 })
+        const tkbThu2 = _.filter(tkbThemThongTin, { thu: 2 })
+        const tkbThu3 = _.filter(tkbThemThongTin, { thu: 3 })
+        const tkbThu4 = _.filter(tkbThemThongTin, { thu: 4 })
+        const tkbThu5 = _.filter(tkbThemThongTin, { thu: 5 })
+        const tkbThu6 = _.filter(tkbThemThongTin, { thu: 6 })
 
         const danhSachTkb = {
           thuHai: filterTkbNew(tkbThu2),
@@ -190,7 +207,9 @@ app.get('/:type', async (req, res) => {
           thuNam: filterTkbNew(tkbThu5),
           thuSau: filterTkbNew(tkbThu6)
         }
-
+        console.log('================================================')
+        console.log('danhSachTkb', danhSachTkb.thuHai)
+        console.log('================================================')
         return res.render('tkb/tkb.html', {
           danhSachTkb,
           listTeacherNew,
