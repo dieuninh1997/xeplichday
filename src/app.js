@@ -294,7 +294,7 @@ app.get('/tkb/sinhtkb', async (req, res) => {
   // Tạo mảng X biểu diễn khả năng giảng viên P được dạy môn S lớp C thứ D tiết T
   // A - { idgiangvien: 2, idmonhoc: 2, idlop: 2, duocdaylop: 1 } L - { idlop: 2, thu: 2, tiet: 1, duocdaytiet: 0 }
   const arrayX = []
-  for (let indexArrX = 0; indexArrX < 5; indexArrX++) {
+  for (let indexArrX = 0; indexArrX < 1; indexArrX++) {
     const X = []
     for (let index = 0; index < A.length; index++) {
       const listLop = _.filter(L, { idlop: A[index].idlop })
