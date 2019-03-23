@@ -169,7 +169,7 @@ app.get('/:type', async (req, res) => {
       const [listTeacherNew] = await Promise.all([
         await knex('giangvien').select()
       ])
-      const tkb = await knex('xrandom').select().where('id', 3).first()
+      const tkb = await knex('xrandom').select().where('id', 2).first()
       const tkbCuoi = JSON.parse(tkb.value)
       let danhsachDuocSapXep = _.sortBy(tkbCuoi, ['thu', 'tiet'])
       let thongTinGiangVien
