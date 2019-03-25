@@ -36,8 +36,12 @@ function filterTkbNew (tkb) {
   ]
 }
 
-function demGioDayY (tkb, idgiangvien, thu) {
-  return _.filter(tkb, { idgiangvien, thu }).length
+function demNgayDayY (tkb, idgiangvien, thu) {
+  const gioday = _.filter(tkb, { idgiangvien, thu })
+  if (gioday.length) {
+    return 1
+  }
+  return 0
 }
 
 // Không giảng viên nào dạy 2 lớp trong cùng thời gian
@@ -60,7 +64,12 @@ function giangBuocHC2 (tkb, idlop, thu, tiet) {
 }
 // Giảng viên phải dạy đúng lớp và đúng môn học được giao
 function giangBuocHC3 (tkb, A, idgiangvien, idmonhoc, idlop, thu, tiet) {
-  return true
+  const resultTkb = _.filter(tkb, { idgiangvien, idmonhoc, idlop, thu, tiet })
+  const lopPhanCong = _.filter(A, { idgiangvien, idmonhoc, idlop, duocdaylop: 0 })// dc day
+  if (lopPhanCong[0].duocdaylop * resultTkb[0].duocdayloptaitiet === 0) {
+    return true
+  }
+  return false
 }
 // Mỗi giảng viên dạy 1 môn nào đó phải đủ số lớp theo phân công
 function giangBuocHC4 (tkb, monhoc, A, idgiangvien, idmonhoc) {
@@ -313,6 +322,35 @@ app.get('/tkb/sinhtkb', async (req, res) => {
                   KT = true
                 } else {
                   if (Xpsctd[0].duocdayloptaitiet === 0) {
+                    // Xet giang buoc mem
+                    const filterGV = {
+                      idgiangvien: phanCongGiangDayHientai.idgiangvien,
+                      thu: thuhocRandom,
+                      duocdayloptaitiet: 1
+                    }
+                    const xemgiangviendadaytietnaotronghomdaychua = _.filter(X, filterGV)
+                    if (xemgiangviendadaytietnaotronghomdaychua.length) {
+                      const filterGVTietTruoc = {
+                        idgiangvien: phanCongGiangDayHientai.idgiangvien,
+                        thu: thuhocRandom,
+                        tiet: tietHocRandom - 1,
+                        duocdayloptaitiet: 1
+                      }
+                      const xemgiangviendadaytiettruoc = _.filter(X, filterGVTietTruoc)
+                      const filterGVTietSau = {
+                        idgiangvien: phanCongGiangDayHientai.idgiangvien,
+                        thu: thuhocRandom,
+                        tiet: tietHocRandom + 1,
+                        duocdayloptaitiet: 1
+                      }
+                      const xemgiangviendadaytietsau = _.filter(X, filterGVTietSau)
+                      if (!xemgiangviendadaytiettruoc.length && !xemgiangviendadaytietsau.length) {
+                        console.log('================================================')
+                        console.log('Bi cach tiet', xemgiangviendadaytiettruoc, xemgiangviendadaytietsau)
+                        console.log('================================================')
+                        continue
+                      }
+                    }
                     const indexOfXpsctd = X.indexOf(Xpsctd[0])
                     X[indexOfXpsctd] = {
                       ...Xpsctd[0], duocdayloptaitiet: 1
@@ -356,7 +394,7 @@ app.get('/tkb/giangvien', async (req, res) => {
       await knex('monhoc').select()
     ])
 
-    const tkb = await knex('xrandom').select().where('id', 2).first()
+    const tkb = await knex('x').select().where('id', 1).first()
     const tkbCuoi = JSON.parse(tkb.value)
     let danhsachDuocSapXep = _.sortBy(tkbCuoi, ['thu', 'tiet'])
     let tkbThemThongTin = []
@@ -399,6 +437,177 @@ app.get('/tkb/giangvien', async (req, res) => {
     }
   } catch (error) {
     res.json({
+      success: false,
+      message: error.message,
+      data: error
+    })
+  }
+})
+
+app.get('/tkb/giangbuoc', async (req, res) => {
+  try {
+    const [listTeacherNew, listClassNew, listSubjectNew, listPhanCongMonHoc, listRandomX] = await Promise.all([
+      await knex('giangvien').select(),
+      await knex('lop').select(),
+      await knex('monhoc').select(),
+      await knex('phanconggiangday').select(),
+      await knex('xrandom').select()
+    ])
+    let listDung = []
+    for (let indexX = 0; indexX < listRandomX.length; indexX++) {
+      const jsonX = JSON.parse(listRandomX[indexX].value)
+      const jsonXAfterSort = _.sortBy(jsonX, ['thu', 'tiet'])
+      let KT_NGOAI = true
+
+      for (let indexGv = 0; indexGv < listTeacherNew.length; indexGv++) {
+        let KT = true
+        const giangvienHienTai = listTeacherNew[indexGv]
+        const listTietHocGv = _.filter(jsonXAfterSort, { idgiangvien: giangvienHienTai.id })
+
+        const listTietThu2 = _.filter(listTietHocGv, { thu: 2 })
+        if (listTietThu2.length) {
+          for (let indexTietThu2 = 0; indexTietThu2 < listTietThu2.length - 1; indexTietThu2++) {
+            const tietDau = listTietThu2[indexTietThu2].tiet
+            const tietSau = listTietThu2[indexTietThu2 + 1].tiet
+            if (tietSau - tietDau !== 1) {
+              KT = false
+              KT_NGOAI = false
+              break
+            }
+          }
+        }
+        const listTietThu3 = _.filter(listTietHocGv, { thu: 3 })
+        if (listTietThu3.length) {
+          for (let indexTietThu3 = 0; indexTietThu3 < listTietThu3.length - 1; indexTietThu3++) {
+            const tietDau = listTietThu3[indexTietThu3].tiet
+            const tietSau = listTietThu3[indexTietThu3 + 1].tiet
+            if (tietSau - tietDau !== 1) {
+              KT = false
+              KT_NGOAI = false
+              break
+            }
+          }
+        }
+        const listTietThu4 = _.filter(listTietHocGv, { thu: 4 })
+        if (listTietThu4.length) {
+          for (let indexTietThu4 = 0; indexTietThu4 < listTietThu4.length - 1; indexTietThu4++) {
+            const tietDau = listTietThu4[indexTietThu4].tiet
+            const tietSau = listTietThu4[indexTietThu4 + 1].tiet
+            if (tietSau - tietDau !== 1) {
+              KT = false
+              KT_NGOAI = false
+              break
+            }
+          }
+        }
+        const listTietThu5 = _.filter(listTietHocGv, { thu: 5 })
+        if (listTietThu5.length) {
+          for (let indexTietThu5 = 0; indexTietThu5 < listTietThu5.length - 1; indexTietThu5++) {
+            const tietDau = listTietThu5[indexTietThu5].tiet
+            const tietSau = listTietThu5[indexTietThu5 + 1].tiet
+            if (tietSau - tietDau !== 1) {
+              KT = false
+              KT_NGOAI = false
+              break
+            }
+          }
+        }
+        const listTietThu6 = _.filter(listTietHocGv, { thu: 6 })
+        if (listTietThu6.length) {
+          for (let indexTietThu6 = 0; indexTietThu6 < listTietThu6.length - 1; indexTietThu6++) {
+            const tietDau = listTietThu6[indexTietThu6].tiet
+            const tietSau = listTietThu6[indexTietThu6 + 1].tiet
+            if (tietSau - tietDau !== 1) {
+              KT = false
+              KT_NGOAI = false
+              break
+            }
+          }
+        }
+        if (!KT) {
+          break
+        }
+      }
+
+      if (KT_NGOAI) {
+        listDung.push({ id: indexX })
+      }
+      lastIndex = indexX
+    }
+
+    for (let indexListDung = 0; indexListDung < listDung.length; indexListDung++) {
+      const valueJson = JSON.parse(listRandomX[listDung[indexListDung].id].value)
+      let tongNgayLenTruongGv = 0
+      for (let indexgv = 0; indexgv < listTeacherNew.length; indexgv++) {
+        const gvhientai = listTeacherNew[indexgv]
+        tongNgayLenTruongGv += demNgayDayY(valueJson, gvhientai.id, 2)
+        tongNgayLenTruongGv += demNgayDayY(valueJson, gvhientai.id, 3)
+        tongNgayLenTruongGv += demNgayDayY(valueJson, gvhientai.id, 4)
+        tongNgayLenTruongGv += demNgayDayY(valueJson, gvhientai.id, 5)
+        tongNgayLenTruongGv += demNgayDayY(valueJson, gvhientai.id, 6)
+      }
+      listDung[indexListDung].tongngay = tongNgayLenTruongGv
+    }
+    const listDungSort = _.sortBy(listDung, 'tongngay')
+
+    // Truncate x table
+    await knex('x').truncate()
+    let listPromise = []
+    for (let indexListDung = 0; indexListDung < listDungSort.length; indexListDung++) {
+      const Xdung = listDungSort[indexListDung]
+      listPromise.push(knex('x').insert({ value: listRandomX[Xdung.id].value, tongngay: Xdung.tongngay }))
+    }
+
+    const listThemVaoX = await Promise.all(listPromise)
+    console.log('================================================')
+    console.log('listThemVaoX', listThemVaoX)
+    console.log('================================================')
+    return res.json({ listThemVaoX })
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+      data: error
+    })
+  }
+})
+
+app.get('/tkb/laitao', async (req, res) => {
+  try {
+    const [listX] = await Promise.all([
+      await knex('x').select()
+    ])
+
+    // Xoa thong tin lai tao cu
+    await knex('xlaitao').truncate()
+    let listSauLaiTaoPromise = []
+    for (let indexX1 = 0; indexX1 < listX.length - 1; indexX1++) {
+      const x1 = JSON.parse(listX[indexX1].value)
+      const sangX1 = _.filter(x1, (tkb) => {
+        return tkb.tiet >= 1 && tkb.tiet <= 5
+      })
+      const chieuX1 = _.filter(x1, (tkb) => {
+        return tkb.tiet >= 6 && tkb.tiet <= 10
+      })
+      for (let indexX2 = indexX1; indexX2 < listX.length; indexX2++) {
+        const x2 = JSON.parse(listX[indexX2].value)
+        const sangX2 = _.filter(x2, (tkb) => {
+          return tkb.tiet >= 1 && tkb.tiet <= 5
+        })
+        const chieuX2 = _.filter(x2, (tkb) => {
+          return tkb.tiet >= 6 && tkb.tiet <= 10
+        })
+        const xmoi3 = [...sangX1, ...chieuX2]
+        const xmoi4 = [...sangX2, ...chieuX1]
+        listSauLaiTaoPromise.push(knex('xlaitao').insert({ value: JSON.stringify(xmoi3) }))
+        listSauLaiTaoPromise.push(knex('xlaitao').insert({ value: JSON.stringify(xmoi4) }))
+      }
+    }
+    const listSauLaiTaoThemThanhCong = await Promise.all(listSauLaiTaoPromise)
+    return res.json({ success: true,
+      data: listSauLaiTaoThemThanhCong })
+  } catch (error) {
+    return res.json({
       success: false,
       message: error.message,
       data: error
