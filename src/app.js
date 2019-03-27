@@ -294,8 +294,8 @@ app.get('/tkb/sinhtkb', async (req, res) => {
             } else {
               danhSachTietHoc = [6, 7, 8, 9, 10]
             }
-            const tietHocRandom = danhSachTietHoc[Math.floor(Math.random() * 4)]
-            const thuhocRandom = danhSachThuHoc[Math.floor(Math.random() * 4)]
+            const tietHocRandom = danhSachTietHoc[_.random(0, 4)]
+            const thuhocRandom = _.random(2, 6)
             const filterL = {
               idlop: thongtinlophientai.id,
               thu: thuhocRandom,
@@ -355,18 +355,20 @@ app.get('/tkb/sinhtkb', async (req, res) => {
                         console.log('Bi cach tiet', thuhocRandom, tietHocRandom, xemgiangviendadaytiettruoc, xemgiangviendadaytietsau, xemgiangviendadaytietnaotronghomdaychua[0].thu, xemgiangviendadaytietnaotronghomdaychua[0].tiet)
                         continue
                       }
-                      console.log('Khong cach tiet!!!')
+                      console.log('Khong cach tiet!!!', thuhocRandom, tietHocRandom)
 
-                      // if (xemgiangviendadaytiettruoc.length) {
-                      //   if (xemgiangviendadaytiettruoc[0].idmonhoc !== phanCongGiangDayHientai.idmonhoc) {
-                      //     continue
-                      //   }
-                      // }
-                      // if (xemgiangviendadaytietsau.length) {
-                      //   if (xemgiangviendadaytietsau[0].idmonhoc !== phanCongGiangDayHientai.idmonhoc) {
-                      //     continue
-                      //   }
-                      // }
+                      if (xemgiangviendadaytiettruoc.length) {
+                        if (xemgiangviendadaytiettruoc[0].idmonhoc !== phanCongGiangDayHientai.idmonhoc) {
+                          console.log('Loi tiet truoc: ', xemgiangviendadaytiettruoc[0].idmonhoc, phanCongGiangDayHientai.idmonhoc)
+                          continue
+                        }
+                      }
+                      if (xemgiangviendadaytietsau.length) {
+                        if (xemgiangviendadaytietsau[0].idmonhoc !== phanCongGiangDayHientai.idmonhoc) {
+                          console.log('Loi tiet sau: ', xemgiangviendadaytietsau[0].idmonhoc, phanCongGiangDayHientai.idmonhoc)
+                          continue
+                        }
+                      }
                     }
                     const indexOfXpsctd = X.indexOf(Xpsctd[0])
                     X[indexOfXpsctd] = {
@@ -485,66 +487,66 @@ app.get('/tkb/giangbuoc', async (req, res) => {
         const giangvienHienTai = listTeacherNew[indexGv]
         const listTietHocGv = _.filter(jsonXAfterSort, { idgiangvien: giangvienHienTai.id })
 
-        const listTietThu2 = _.filter(listTietHocGv, { thu: 2 })
-        if (listTietThu2.length) {
-          for (let indexTietThu2 = 0; indexTietThu2 < listTietThu2.length - 1; indexTietThu2++) {
-            const tietDau = listTietThu2[indexTietThu2].tiet
-            const tietSau = listTietThu2[indexTietThu2 + 1].tiet
-            if (tietSau - tietDau !== 1) {
-              KT = false
-              KT_NGOAI = false
-              break
-            }
-          }
-        }
-        const listTietThu3 = _.filter(listTietHocGv, { thu: 3 })
-        if (listTietThu3.length) {
-          for (let indexTietThu3 = 0; indexTietThu3 < listTietThu3.length - 1; indexTietThu3++) {
-            const tietDau = listTietThu3[indexTietThu3].tiet
-            const tietSau = listTietThu3[indexTietThu3 + 1].tiet
-            if (tietSau - tietDau !== 1) {
-              KT = false
-              KT_NGOAI = false
-              break
-            }
-          }
-        }
-        const listTietThu4 = _.filter(listTietHocGv, { thu: 4 })
-        if (listTietThu4.length) {
-          for (let indexTietThu4 = 0; indexTietThu4 < listTietThu4.length - 1; indexTietThu4++) {
-            const tietDau = listTietThu4[indexTietThu4].tiet
-            const tietSau = listTietThu4[indexTietThu4 + 1].tiet
-            if (tietSau - tietDau !== 1) {
-              KT = false
-              KT_NGOAI = false
-              break
-            }
-          }
-        }
-        const listTietThu5 = _.filter(listTietHocGv, { thu: 5 })
-        if (listTietThu5.length) {
-          for (let indexTietThu5 = 0; indexTietThu5 < listTietThu5.length - 1; indexTietThu5++) {
-            const tietDau = listTietThu5[indexTietThu5].tiet
-            const tietSau = listTietThu5[indexTietThu5 + 1].tiet
-            if (tietSau - tietDau !== 1) {
-              KT = false
-              KT_NGOAI = false
-              break
-            }
-          }
-        }
-        const listTietThu6 = _.filter(listTietHocGv, { thu: 6 })
-        if (listTietThu6.length) {
-          for (let indexTietThu6 = 0; indexTietThu6 < listTietThu6.length - 1; indexTietThu6++) {
-            const tietDau = listTietThu6[indexTietThu6].tiet
-            const tietSau = listTietThu6[indexTietThu6 + 1].tiet
-            if (tietSau - tietDau !== 1) {
-              KT = false
-              KT_NGOAI = false
-              break
-            }
-          }
-        }
+        // const listTietThu2 = _.filter(listTietHocGv, { thu: 2 })
+        // if (listTietThu2.length) {
+        //   for (let indexTietThu2 = 0; indexTietThu2 < listTietThu2.length - 1; indexTietThu2++) {
+        //     const tietDau = listTietThu2[indexTietThu2].tiet
+        //     const tietSau = listTietThu2[indexTietThu2 + 1].tiet
+        //     if (tietSau - tietDau !== 1) {
+        //       KT = false
+        //       KT_NGOAI = false
+        //       break
+        //     }
+        //   }
+        // }
+        // const listTietThu3 = _.filter(listTietHocGv, { thu: 3 })
+        // if (listTietThu3.length) {
+        //   for (let indexTietThu3 = 0; indexTietThu3 < listTietThu3.length - 1; indexTietThu3++) {
+        //     const tietDau = listTietThu3[indexTietThu3].tiet
+        //     const tietSau = listTietThu3[indexTietThu3 + 1].tiet
+        //     if (tietSau - tietDau !== 1) {
+        //       KT = false
+        //       KT_NGOAI = false
+        //       break
+        //     }
+        //   }
+        // }
+        // const listTietThu4 = _.filter(listTietHocGv, { thu: 4 })
+        // if (listTietThu4.length) {
+        //   for (let indexTietThu4 = 0; indexTietThu4 < listTietThu4.length - 1; indexTietThu4++) {
+        //     const tietDau = listTietThu4[indexTietThu4].tiet
+        //     const tietSau = listTietThu4[indexTietThu4 + 1].tiet
+        //     if (tietSau - tietDau !== 1) {
+        //       KT = false
+        //       KT_NGOAI = false
+        //       break
+        //     }
+        //   }
+        // }
+        // const listTietThu5 = _.filter(listTietHocGv, { thu: 5 })
+        // if (listTietThu5.length) {
+        //   for (let indexTietThu5 = 0; indexTietThu5 < listTietThu5.length - 1; indexTietThu5++) {
+        //     const tietDau = listTietThu5[indexTietThu5].tiet
+        //     const tietSau = listTietThu5[indexTietThu5 + 1].tiet
+        //     if (tietSau - tietDau !== 1) {
+        //       KT = false
+        //       KT_NGOAI = false
+        //       break
+        //     }
+        //   }
+        // }
+        // const listTietThu6 = _.filter(listTietHocGv, { thu: 6 })
+        // if (listTietThu6.length) {
+        //   for (let indexTietThu6 = 0; indexTietThu6 < listTietThu6.length - 1; indexTietThu6++) {
+        //     const tietDau = listTietThu6[indexTietThu6].tiet
+        //     const tietSau = listTietThu6[indexTietThu6 + 1].tiet
+        //     if (tietSau - tietDau !== 1) {
+        //       KT = false
+        //       KT_NGOAI = false
+        //       break
+        //     }
+        //   }
+        // }
         if (!KT) {
           break
         }
@@ -553,9 +555,10 @@ app.get('/tkb/giangbuoc', async (req, res) => {
       if (KT_NGOAI) {
         listDung.push({ id: indexX })
       }
-      lastIndex = indexX
     }
-
+    console.log('================================================')
+    console.log('listDung', listDung)
+    console.log('================================================')
     for (let indexListDung = 0; indexListDung < listDung.length; indexListDung++) {
       const valueJson = JSON.parse(listRandomX[listDung[indexListDung].id].value)
       let tongNgayLenTruongGv = 0
