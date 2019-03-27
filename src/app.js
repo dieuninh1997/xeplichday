@@ -196,7 +196,6 @@ app.get('/tkb/sinhtkb', async (req, res) => {
   const danhTietHocTrongNgay = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
   // Tao mang A phan cong mon hoc: { idgiangvien: 2, idmonhoc: 2, idlop: 2, duocdaylop: 0 }
-
   const A = []
   for (let giangvien = 0; giangvien < listTeacherNew.length; giangvien++) {
     for (let monhoc = 0; monhoc < listSubjectNew.length; monhoc++) {
@@ -228,6 +227,7 @@ app.get('/tkb/sinhtkb', async (req, res) => {
               idlop: listClassNew[lop].id,
               thu: danhSachThuHoc[thuhoc],
               tiet: danhTietHocTrongNgay[tiethoc],
+              buoihoc: 's',
               duocdaytiet: 0 // 0 là được dạy tiết này
             })
           } else {
@@ -235,6 +235,7 @@ app.get('/tkb/sinhtkb', async (req, res) => {
               idlop: listClassNew[lop].id,
               thu: danhSachThuHoc[thuhoc],
               tiet: danhTietHocTrongNgay[tiethoc],
+              buoihoc: 's',
               duocdaytiet: 1 // 1 là không được dạy tiết này
             })
           }
@@ -244,6 +245,7 @@ app.get('/tkb/sinhtkb', async (req, res) => {
               idlop: listClassNew[lop].id,
               thu: danhSachThuHoc[thuhoc],
               tiet: danhTietHocTrongNgay[tiethoc],
+              buoihoc: 'c',
               duocdaytiet: 1 // 1 là không được dạy tiết này
             })
           } else {
@@ -251,6 +253,7 @@ app.get('/tkb/sinhtkb', async (req, res) => {
               idlop: listClassNew[lop].id,
               thu: danhSachThuHoc[thuhoc],
               tiet: danhTietHocTrongNgay[tiethoc],
+              buoihoc: 'c',
               duocdaytiet: 0 // 0 là được dạy tiết này
             })
           }
@@ -275,6 +278,8 @@ app.get('/tkb/sinhtkb', async (req, res) => {
       }
     }
     // For mảng A phân công giảng dạy : 0 được dạy - 1 không được dạy ({ idgiangvien: 2, idmonhoc: 2, idlop: 2, duocdaylop: 0 })
+    let dem = 0
+
     for (let index = 0; index < A.length; index++) {
       if (A[index].duocdaylop === 0) {
         const phanCongGiangDayHientai = A[index] // có P, S, C
@@ -289,8 +294,8 @@ app.get('/tkb/sinhtkb', async (req, res) => {
             } else {
               danhSachTietHoc = [6, 7, 8, 9, 10]
             }
-            const tietHocRandom = danhSachTietHoc[Math.floor(Math.random() * 5)]
-            const thuhocRandom = danhSachThuHoc[Math.floor(Math.random() * 5)]
+            const tietHocRandom = danhSachTietHoc[Math.floor(Math.random() * 4)]
+            const thuhocRandom = danhSachThuHoc[Math.floor(Math.random() * 4)]
             const filterL = {
               idlop: thongtinlophientai.id,
               thu: thuhocRandom,
@@ -323,9 +328,11 @@ app.get('/tkb/sinhtkb', async (req, res) => {
                 } else {
                   if (Xpsctd[0].duocdayloptaitiet === 0) {
                     // Xet giang buoc mem
+
                     const filterGV = {
                       idgiangvien: phanCongGiangDayHientai.idgiangvien,
                       thu: thuhocRandom,
+                      buoihoc: thongtinlophientai.buoihoc,
                       duocdayloptaitiet: 1
                     }
                     const xemgiangviendadaytietnaotronghomdaychua = _.filter(X, filterGV)
@@ -345,16 +352,30 @@ app.get('/tkb/sinhtkb', async (req, res) => {
                       }
                       const xemgiangviendadaytietsau = _.filter(X, filterGVTietSau)
                       if (!xemgiangviendadaytiettruoc.length && !xemgiangviendadaytietsau.length) {
-                        console.log('================================================')
-                        console.log('Bi cach tiet', xemgiangviendadaytiettruoc, xemgiangviendadaytietsau)
-                        console.log('================================================')
+                        console.log('Bi cach tiet', thuhocRandom, tietHocRandom, xemgiangviendadaytiettruoc, xemgiangviendadaytietsau, xemgiangviendadaytietnaotronghomdaychua[0].thu, xemgiangviendadaytietnaotronghomdaychua[0].tiet)
                         continue
                       }
+                      console.log('Khong cach tiet!!!')
+
+                      // if (xemgiangviendadaytiettruoc.length) {
+                      //   if (xemgiangviendadaytiettruoc[0].idmonhoc !== phanCongGiangDayHientai.idmonhoc) {
+                      //     continue
+                      //   }
+                      // }
+                      // if (xemgiangviendadaytietsau.length) {
+                      //   if (xemgiangviendadaytietsau[0].idmonhoc !== phanCongGiangDayHientai.idmonhoc) {
+                      //     continue
+                      //   }
+                      // }
                     }
                     const indexOfXpsctd = X.indexOf(Xpsctd[0])
                     X[indexOfXpsctd] = {
                       ...Xpsctd[0], duocdayloptaitiet: 1
                     }
+                    dem += 1
+                    console.log('================================================')
+                    console.log('Đã thêm: ', dem)
+                    console.log('================================================')
                     KT = false
                   } else {
                     KT = false
