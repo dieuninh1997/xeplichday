@@ -355,20 +355,6 @@ app.get('/tkb/sinhtkb', async (req, res) => {
                         console.log('Bi cach tiet', thuhocRandom, tietHocRandom, xemgiangviendadaytiettruoc, xemgiangviendadaytietsau, xemgiangviendadaytietnaotronghomdaychua[0].thu, xemgiangviendadaytietnaotronghomdaychua[0].tiet)
                         continue
                       }
-                      console.log('Khong cach tiet!!!', thuhocRandom, tietHocRandom)
-
-                      if (xemgiangviendadaytiettruoc.length) {
-                        if (xemgiangviendadaytiettruoc[0].idmonhoc !== phanCongGiangDayHientai.idmonhoc) {
-                          console.log('Loi tiet truoc: ', xemgiangviendadaytiettruoc[0].idmonhoc, phanCongGiangDayHientai.idmonhoc)
-                          continue
-                        }
-                      }
-                      if (xemgiangviendadaytietsau.length) {
-                        if (xemgiangviendadaytietsau[0].idmonhoc !== phanCongGiangDayHientai.idmonhoc) {
-                          console.log('Loi tiet sau: ', xemgiangviendadaytietsau[0].idmonhoc, phanCongGiangDayHientai.idmonhoc)
-                          continue
-                        }
-                      }
                     }
                     const indexOfXpsctd = X.indexOf(Xpsctd[0])
                     X[indexOfXpsctd] = {
