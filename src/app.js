@@ -264,129 +264,122 @@ app.get('/tkb/sinhtkb', async (req, res) => {
 
   // Tạo mảng X biểu diễn khả năng giảng viên P được dạy môn S lớp C thứ D tiết T
   // A - { idgiangvien: 2, idmonhoc: 2, idlop: 2, duocdaylop: 1 } L - { idlop: 2, thu: 2, tiet: 1, duocdaytiet: 0 }
-  const arrayX = []
-  for (let indexArrX = 0; indexArrX < 1; indexArrX++) {
-    const X = []
-    for (let index = 0; index < A.length; index++) {
-      const listLop = _.filter(L, { idlop: A[index].idlop })
-      for (let indexLop = 0; indexLop < listLop.length; indexLop++) {
-        X.push({
-          ...A[index],
-          ...listLop[indexLop],
-          duocdayloptaitiet: 0 // 0 Là không được dạy lớp này tại tiết này
-        })
-      }
+  const X = []
+  for (let index = 0; index < A.length; index++) {
+    const listLop = _.filter(L, { idlop: A[index].idlop })
+    for (let indexLop = 0; indexLop < listLop.length; indexLop++) {
+      X.push({
+        ...A[index],
+        ...listLop[indexLop],
+        duocdayloptaitiet: 0 // 0 Là không được dạy lớp này tại tiết này
+      })
     }
-    // For mảng A phân công giảng dạy : 0 được dạy - 1 không được dạy ({ idgiangvien: 2, idmonhoc: 2, idlop: 2, duocdaylop: 0 })
-    let dem = 0
+  }
 
-    for (let index = 0; index < A.length; index++) {
-      if (A[index].duocdaylop === 0) {
-        const phanCongGiangDayHientai = A[index] // có P, S, C
-        const thongtinmonhochientai = _.filter(listSubjectNew, { id: phanCongGiangDayHientai.idmonhoc })[0]
-        const thongtinlophientai = _.filter(listClassNew, { id: phanCongGiangDayHientai.idlop })[0]
-        for (let tinchi = 1; tinchi <= thongtinmonhochientai.sotinchi; tinchi++) {
-          let KT = true
-          while (KT) {
-            let danhSachTietHoc = []
-            if (thongtinlophientai.buoihoc === 's') {
-              danhSachTietHoc = [1, 2, 3, 4, 5]
-            } else {
-              danhSachTietHoc = [6, 7, 8, 9, 10]
+  console.log('========================================')
+  console.log('Da xet xong X')
+  console.log('========================================')
+  // For mảng A phân công giảng dạy : 0 được dạy - 1 không được dạy ({ idgiangvien: 2, idmonhoc: 2, idlop: 2, duocdaylop: 0 })
+  let dem = 0
+  for (let indexGV = 0; indexGV < listTeacherNew.length; indexGV++) {
+    const phanCongGiangDayCuaGvHienTai = _.filter(A, { idgiangvien: listTeacherNew[indexGV].id, duocdaylop: 0 })
+    for (let indexLop = 0; indexLop < listClassNew.length; indexLop++) {
+      const dsMonHocCuaGvTaiLopHienTai = _.filter(phanCongGiangDayCuaGvHienTai, { idlop: listClassNew[indexLop].id })
+
+      if (dsMonHocCuaGvTaiLopHienTai.length) {
+        let soTinChiCuaMon = 0
+        let KT = true
+
+        for (let indexMon = 0; indexMon < dsMonHocCuaGvTaiLopHienTai.length; indexMon++) {
+          const monHoc = dsMonHocCuaGvTaiLopHienTai[indexMon]
+          const thongTinMonHoc = _.filter(listSubjectNew, { id: monHoc.idmonhoc })[0]
+          soTinChiCuaMon = 0
+          if (!KT) {
+            break
+          }
+          for (let indexThu = 0; indexThu < danhSachThuHoc.length; indexThu++) {
+            if (!KT) {
+              break
             }
-            const tietHocRandom = danhSachTietHoc[_.random(0, 4)]
-            const thuhocRandom = _.random(2, 6)
-            const filterL = {
-              idlop: thongtinlophientai.id,
-              thu: thuhocRandom,
-              tiet: tietHocRandom,
-              duocdaytiet: 0
-            }
+            const thuHoc = danhSachThuHoc[indexThu]
 
-            const kiemtratiethoccualoptaithu = _.filter(L, filterL) // L { idlop: 2, thu: 2, tiet: 1, duocdaytiet: 0 }
-            if (kiemtratiethoccualoptaithu.length) {
-              const Xpsctd = _.filter(X, { ...phanCongGiangDayHientai, ...kiemtratiethoccualoptaithu[0] })
-
-              // Xet giang buoc HC1
-              const filterHC1 = {
-                idgiangvien: phanCongGiangDayHientai.idgiangvien, thu: thuhocRandom, tiet: tietHocRandom, duocdayloptaitiet: 1
+            for (let indexTiet = 0; indexTiet < danhTietHocTrongNgay.length; indexTiet++) {
+              if (soTinChiCuaMon >= thongTinMonHoc.sotinchi) {
+                KT = false
+                break
               }
-              const xemgiangviendadaylopnaotaitietchua = _.filter(X, filterHC1)
-              if (xemgiangviendadaylopnaotaitietchua.length) {
-                KT = true
-              } else {
-                // Xet giang buoc HC2
-                const filterHC2 = {
-                  idlop: phanCongGiangDayHientai.idlop,
-                  thu: thuhocRandom,
-                  tiet: tietHocRandom,
-                  duocdayloptaitiet: 1
-                }
-                const xemlopdahocmonnaochua = _.filter(X, filterHC2)
-                if (xemlopdahocmonnaochua.length) {
-                  KT = true
-                } else {
-                  if (Xpsctd[0].duocdayloptaitiet === 0) {
-                    // Xet giang buoc mem
+              const tietHoc = danhTietHocTrongNgay[indexTiet]
 
-                    const filterGV = {
-                      idgiangvien: phanCongGiangDayHientai.idgiangvien,
-                      thu: thuhocRandom,
-                      buoihoc: thongtinlophientai.buoihoc,
-                      duocdayloptaitiet: 1
+              // HC1
+              const kiemTraXemGvDoTaiThuDoTietDoDaDayLopNaoChua = _.filter(X, {
+                idgiangvien: listTeacherNew[indexGV].id,
+                thu: thuHoc,
+                tiet: tietHoc,
+                duocdayloptaitiet: 1
+              })
+              if (!kiemTraXemGvDoTaiThuDoTietDoDaDayLopNaoChua.length) {
+                // HC2
+                const kiemTraXemLopDoTaiThuDoTietDoDaHocMonNaoChua = _.filter(X, {
+                  idlop: listClassNew[indexLop].id,
+                  thu: thuHoc,
+                  tiet: tietHoc,
+                  duocdayloptaitiet: 1
+                })
+
+                if (!kiemTraXemLopDoTaiThuDoTietDoDaHocMonNaoChua.length) {
+                  const kiemTraThuVaTietCoDuocHocKhong = _.filter(L, {
+                    idlop: listClassNew[indexLop].id,
+                    thu: thuHoc,
+                    tiet: tietHoc,
+                    duocdaytiet: 0
+                  })
+                  if (kiemTraThuVaTietCoDuocHocKhong.length) {
+                    const filterX = {
+                      idgiangvien: listTeacherNew[indexGV].id,
+                      idmonhoc: monHoc.idmonhoc,
+                      idlop: listClassNew[indexLop].id,
+                      thu: thuHoc,
+                      tiet: tietHoc,
+                      duocdayloptaitiet: 0
                     }
-                    const xemgiangviendadaytietnaotronghomdaychua = _.filter(X, filterGV)
-                    if (xemgiangviendadaytietnaotronghomdaychua.length) {
-                      const filterGVTietTruoc = {
-                        idgiangvien: phanCongGiangDayHientai.idgiangvien,
-                        thu: thuhocRandom,
-                        tiet: tietHocRandom - 1,
-                        duocdayloptaitiet: 1
+                    const Xpsctd = _.filter(X, filterX)
+
+                    // let soTietTrong = -1
+                    // if (Xpsctd[0].buoihoc === 's') {
+                    //   soTietTrong = 5 - tietHoc + 1
+                    // } else {
+                    //   soTietTrong = 10 - tietHoc + 1
+                    // }
+                    // console.log('========================================')
+                    // console.log('Xpsctd', soTietTrong, Xpsctd[0])
+                    // console.log('========================================')
+                    // if (soTietTrong >= 0 && soTietTrong < thongTinMonHoc.sotinchi) {
+                    //   // KT = false
+                    //   break
+                    // }
+                    if (Xpsctd.length) {
+                      const indexOfXpsctd = X.indexOf(Xpsctd[0])
+                      X[indexOfXpsctd] = {
+                        ...Xpsctd[0], duocdayloptaitiet: 1
                       }
-                      const xemgiangviendadaytiettruoc = _.filter(X, filterGVTietTruoc)
-                      const filterGVTietSau = {
-                        idgiangvien: phanCongGiangDayHientai.idgiangvien,
-                        thu: thuhocRandom,
-                        tiet: tietHocRandom + 1,
-                        duocdayloptaitiet: 1
-                      }
-                      const xemgiangviendadaytietsau = _.filter(X, filterGVTietSau)
-                      if (!xemgiangviendadaytiettruoc.length && !xemgiangviendadaytietsau.length) {
-                        console.log('Bi cach tiet', thuhocRandom, tietHocRandom, xemgiangviendadaytiettruoc, xemgiangviendadaytietsau, xemgiangviendadaytietnaotronghomdaychua[0].thu, xemgiangviendadaytietnaotronghomdaychua[0].tiet)
-                        continue
-                      }
+                      dem += 1
+                      soTinChiCuaMon += 1
+                      console.log('========================================')
+                      console.log('Da them vao X ', dem)
+                      console.log('========================================')
                     }
-                    const indexOfXpsctd = X.indexOf(Xpsctd[0])
-                    X[indexOfXpsctd] = {
-                      ...Xpsctd[0], duocdayloptaitiet: 1
-                    }
-                    dem += 1
-                    console.log('================================================')
-                    console.log('Đã thêm: ', dem)
-                    console.log('================================================')
-                    KT = false
-                  } else {
-                    KT = false
                   }
                 }
               }
-            } else {
-              KT = true
             }
           }
         }
       }
     }
-    arrayX.push(_.filter(X, { duocdayloptaitiet: 1 }))
   }
 
-  const listCuoi = kiemTra(arrayX, A, listSubjectNew, [])
-  const listPromise = []
-  for (let index = 0; index < listCuoi.length; index++) {
-    const tkb = listCuoi[index]
-    listPromise.push(knex('xrandom').insert({ value: JSON.stringify(tkb) }))
-  }
-  const listDone = await Promise.all(listPromise)
+  const XCuoiCung = _.filter(X, { duocdayloptaitiet: 1 })
+  const listDone = await knex('xrandom').insert({ value: JSON.stringify(XCuoiCung) })
   console.log('================================================')
   console.log('Da them ', listDone)
   console.log('================================================')
