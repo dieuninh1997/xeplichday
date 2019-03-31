@@ -634,7 +634,7 @@ app.get('/tkb/lop', async (req, res) => {
       await knex('monhoc').select()
     ])
 
-    const tkb = await knex('xrandom').select().where('id', 2).first()
+    const tkb = await knex('x').select().where('id', 1).first()
     const tkbCuoi = JSON.parse(tkb.value)
     let danhsachDuocSapXep = _.sortBy(tkbCuoi, ['thu', 'tiet'])
     let tkbThemThongTin = []
