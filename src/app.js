@@ -276,9 +276,6 @@ app.get('/tkb/sinhtkb', async (req, res) => {
     }
   }
 
-  console.log('========================================')
-  console.log('Da xet xong X')
-  console.log('========================================')
   // For mảng A phân công giảng dạy : 0 được dạy - 1 không được dạy ({ idgiangvien: 2, idmonhoc: 2, idlop: 2, duocdaylop: 0 })
   let dem = 0
   for (let indexGV = 0; indexGV < listTeacherNew.length; indexGV++) {
@@ -294,11 +291,9 @@ app.get('/tkb/sinhtkb', async (req, res) => {
           const monHoc = dsMonHocCuaGvTaiLopHienTai[indexMon]
           const thongTinMonHoc = _.filter(listSubjectNew, { id: monHoc.idmonhoc })[0]
           soTinChiCuaMon = 0
-          if (!KT) {
-            break
-          }
           for (let indexThu = 0; indexThu < danhSachThuHoc.length; indexThu++) {
             if (!KT) {
+              KT = true
               break
             }
             const thuHoc = danhSachThuHoc[indexThu]
@@ -342,21 +337,9 @@ app.get('/tkb/sinhtkb', async (req, res) => {
                       tiet: tietHoc,
                       duocdayloptaitiet: 0
                     }
+
                     const Xpsctd = _.filter(X, filterX)
 
-                    // let soTietTrong = -1
-                    // if (Xpsctd[0].buoihoc === 's') {
-                    //   soTietTrong = 5 - tietHoc + 1
-                    // } else {
-                    //   soTietTrong = 10 - tietHoc + 1
-                    // }
-                    // console.log('========================================')
-                    // console.log('Xpsctd', soTietTrong, Xpsctd[0])
-                    // console.log('========================================')
-                    // if (soTietTrong >= 0 && soTietTrong < thongTinMonHoc.sotinchi) {
-                    //   // KT = false
-                    //   break
-                    // }
                     if (Xpsctd.length) {
                       const indexOfXpsctd = X.indexOf(Xpsctd[0])
                       X[indexOfXpsctd] = {
