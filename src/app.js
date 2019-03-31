@@ -396,14 +396,14 @@ app.get('/tkb/sinhtkb', async (req, res) => {
 
 app.get('/tkb/giangvien', async (req, res) => {
   try {
-    const { giangvien = 2 } = req.query
+    const { giangvien = 2, idtkb = 1 } = req.query
     const [listTeacherNew, listClassNew, listSubjectNew] = await Promise.all([
       await knex('giangvien').select(),
       await knex('lop').select(),
       await knex('monhoc').select()
     ])
 
-    const tkb = await knex('x').select().where('id', 1).first()
+    const tkb = await knex('x').select().where('id', idtkb).first()
     const tkbCuoi = JSON.parse(tkb.value)
     let danhsachDuocSapXep = _.sortBy(tkbCuoi, ['thu', 'tiet'])
     let tkbThemThongTin = []
@@ -441,7 +441,8 @@ app.get('/tkb/giangvien', async (req, res) => {
       return res.render('tkb/tkb.html', {
         danhSachTkb,
         listTeacherNew,
-        giangvien: thongTinGiangVien
+        giangvien: thongTinGiangVien,
+        idtkb
       })
     }
   } catch (error) {
@@ -627,14 +628,14 @@ app.get('/tkb/laitao', async (req, res) => {
 
 app.get('/tkb/lop', async (req, res) => {
   try {
-    const { lop = 2 } = req.query
+    const { lop = 2, idtkb = 1 } = req.query
     const [listTeacherNew, listClassNew, listSubjectNew] = await Promise.all([
       await knex('giangvien').select(),
       await knex('lop').select(),
       await knex('monhoc').select()
     ])
 
-    const tkb = await knex('x').select().where('id', 1).first()
+    const tkb = await knex('x').select().where('id', idtkb).first()
     const tkbCuoi = JSON.parse(tkb.value)
     let danhsachDuocSapXep = _.sortBy(tkbCuoi, ['thu', 'tiet'])
     let tkbThemThongTin = []
@@ -672,7 +673,8 @@ app.get('/tkb/lop', async (req, res) => {
       return res.render('tkb/tkb-lop.html', {
         danhSachTkb,
         listClassNew,
-        lop: thongTinLop
+        lop: thongTinLop,
+        idtkb
       })
     }
   } catch (error) {
