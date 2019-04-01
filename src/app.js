@@ -291,6 +291,7 @@ app.get('/tkb/sinhtkb', async (req, res) => {
           const monHoc = dsMonHocCuaGvTaiLopHienTai[indexMon]
           const thongTinMonHoc = _.filter(listSubjectNew, { id: monHoc.idmonhoc })[0]
           soTinChiCuaMon = 0
+
           for (let indexThu = 0; indexThu < danhSachThuHoc.length; indexThu++) {
             if (!KT) {
               KT = true
@@ -298,58 +299,75 @@ app.get('/tkb/sinhtkb', async (req, res) => {
             }
             const thuHoc = danhSachThuHoc[indexThu]
 
-            for (let indexTiet = 0; indexTiet < danhTietHocTrongNgay.length; indexTiet++) {
-              if (soTinChiCuaMon >= thongTinMonHoc.sotinchi) {
-                KT = false
-                break
-              }
-              const tietHoc = danhTietHocTrongNgay[indexTiet]
+            const filterSoTietLopDaHocTheoBuoi = _.filter(X, {
+              idlop: listClassNew[indexLop].id,
+              buoihoc: listClassNew[indexLop].buoihoc,
+              thu: thuHoc,
+              duocdayloptaitiet: 1
+            })
 
-              // HC1
-              const kiemTraXemGvDoTaiThuDoTietDoDaDayLopNaoChua = _.filter(X, {
-                idgiangvien: listTeacherNew[indexGV].id,
-                thu: thuHoc,
-                tiet: tietHoc,
-                duocdayloptaitiet: 1
-              })
-              if (!kiemTraXemGvDoTaiThuDoTietDoDaDayLopNaoChua.length) {
-                // HC2
-                const kiemTraXemLopDoTaiThuDoTietDoDaHocMonNaoChua = _.filter(X, {
-                  idlop: listClassNew[indexLop].id,
+            const filterSoTietGvDaDayTheoBuoi = _.filter(X, {
+              idgiangvien: listTeacherNew[indexGV].id,
+              buoihoc: listClassNew[indexLop].buoihoc,
+              thu: thuHoc,
+              duocdayloptaitiet: 1
+            })
+            const tietCuoiCungGiangVienDay = filterSoTietGvDaDayTheoBuoi.length ? filterSoTietGvDaDayTheoBuoi[filterSoTietGvDaDayTheoBuoi.length - 1].tiet : 0
+            const soTietConLaiTrongBuoiCuaGiangVien = listClassNew[indexLop].buoihoc === 's' ? 5 - tietCuoiCungGiangVienDay : 10 - tietCuoiCungGiangVienDay
+            if ((5 - filterSoTietLopDaHocTheoBuoi.length) >= thongTinMonHoc.sotinchi && (5 - filterSoTietGvDaDayTheoBuoi.length) >= thongTinMonHoc.sotinchi && soTietConLaiTrongBuoiCuaGiangVien >= thongTinMonHoc.sotinchi) {
+              for (let indexTiet = 0; indexTiet < danhTietHocTrongNgay.length; indexTiet++) {
+                if (soTinChiCuaMon >= thongTinMonHoc.sotinchi) {
+                  KT = false
+                  break
+                }
+                const tietHoc = danhTietHocTrongNgay[indexTiet]
+
+                // HC1
+                const kiemTraXemGvDoTaiThuDoTietDoDaDayLopNaoChua = _.filter(X, {
+                  idgiangvien: listTeacherNew[indexGV].id,
                   thu: thuHoc,
                   tiet: tietHoc,
                   duocdayloptaitiet: 1
                 })
-
-                if (!kiemTraXemLopDoTaiThuDoTietDoDaHocMonNaoChua.length) {
-                  const kiemTraThuVaTietCoDuocHocKhong = _.filter(L, {
+                if (!kiemTraXemGvDoTaiThuDoTietDoDaDayLopNaoChua.length) {
+                // HC2
+                  const kiemTraXemLopDoTaiThuDoTietDoDaHocMonNaoChua = _.filter(X, {
                     idlop: listClassNew[indexLop].id,
                     thu: thuHoc,
                     tiet: tietHoc,
-                    duocdaytiet: 0
+                    duocdayloptaitiet: 1
                   })
-                  if (kiemTraThuVaTietCoDuocHocKhong.length) {
-                    const filterX = {
-                      idgiangvien: listTeacherNew[indexGV].id,
-                      idmonhoc: monHoc.idmonhoc,
+
+                  if (!kiemTraXemLopDoTaiThuDoTietDoDaHocMonNaoChua.length) {
+                    const kiemTraThuVaTietCoDuocHocKhong = _.filter(L, {
                       idlop: listClassNew[indexLop].id,
                       thu: thuHoc,
                       tiet: tietHoc,
-                      duocdayloptaitiet: 0
-                    }
-
-                    const Xpsctd = _.filter(X, filterX)
-
-                    if (Xpsctd.length) {
-                      const indexOfXpsctd = X.indexOf(Xpsctd[0])
-                      X[indexOfXpsctd] = {
-                        ...Xpsctd[0], duocdayloptaitiet: 1
+                      duocdaytiet: 0
+                    })
+                    if (kiemTraThuVaTietCoDuocHocKhong.length) {
+                      const filterX = {
+                        idgiangvien: listTeacherNew[indexGV].id,
+                        idmonhoc: monHoc.idmonhoc,
+                        idlop: listClassNew[indexLop].id,
+                        thu: thuHoc,
+                        tiet: tietHoc,
+                        duocdayloptaitiet: 0
                       }
-                      dem += 1
-                      soTinChiCuaMon += 1
-                      console.log('========================================')
-                      console.log('Da them vao X ', dem)
-                      console.log('========================================')
+
+                      const Xpsctd = _.filter(X, filterX)
+
+                      if (Xpsctd.length) {
+                        const indexOfXpsctd = X.indexOf(Xpsctd[0])
+                        X[indexOfXpsctd] = {
+                          ...Xpsctd[0], duocdayloptaitiet: 1
+                        }
+                        dem += 1
+                        soTinChiCuaMon += 1
+                        console.log('========================================')
+                        console.log('Da them vao X ', dem)
+                        console.log('========================================')
+                      }
                     }
                   }
                 }
