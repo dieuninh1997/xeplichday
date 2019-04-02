@@ -8,7 +8,8 @@
         <div class="input-field col s12">
           <select name="lop" id="select-gv-tkb">
             {% for class in listClassNew %}
-            <option value={{class.id}} {% if lop.id == class.id %}selected{% endif %}>{{ class.khoahoc }} - {{class.name}}
+            <option value={{class.id}} {% if lop.id == class.id %}selected{% endif %}>{{ class.khoahoc }} -
+              {{class.name}}
             </option>
             {% endfor %}
           </select>
@@ -21,77 +22,119 @@
     </h5>
     {% endif %}
     <table class="responsive-table striped">
-      <thead class="table-head ">
+      <thead class="table-head">
         <tr>
-          <th></th>
-          <th>Tiết 1</th>
-          <th>Tiết 2</th>
-          <th>Tiết 3</th>
-          <th>Tiết 4</th>
-          <th>Tiết 5</th>
-          <th>Tiết 6</th>
-          <th>Tiết 7</th>
-          <th>Tiết 8</th>
-          <th>Tiết 9</th>
-          <th>Tiết 10</th>
+          <td rowspan="3">STT</td>
+          <td rowspan="3">Tên Học Phần</td>
+          <td rowspan="3">Mã Môn</td>
+          <td rowspan="3">Số Tín Chỉ</td>
+          <th colspan="2" scope="colgroup">Thứ Hai</th>
+          <th colspan="2" scope="colgroup">Thứ Ba</th>
+          <th colspan="2" scope="colgroup">Thứ Tư</th>
+          <th colspan="2" scope="colgroup">Thứ Năm</th>
+          <th colspan="2" scope="colgroup">Thứ Sáu</th>
+          <td rowspan="3">Tên Giảng Viên</td>
+        </tr>
+        <tr>
+          <th scope="col">Sáng</th>
+          <th scope="col">Chiều</th>
+          <th scope="col">Sáng</th>
+          <th scope="col">Chiều</th>
+          <th scope="col">Sáng</th>
+          <th scope="col">Chiều</th>
+          <th scope="col">Sáng</th>
+          <th scope="col">Chiều</th>
+          <th scope="col">Sáng</th>
+          <th scope="col">Chiều</th>
+        </tr>
+        <tr>
+          <th scope="col">1->5</th>
+          <th scope="col">6->10</th>
+          <th scope="col">1->5</th>
+          <th scope="col">6->10</th>
+          <th scope="col">1->5</th>
+          <th scope="col">6->10</th>
+          <th scope="col">1->5</th>
+          <th scope="col">6->10</th>
+          <th scope="col">1->5</th>
+          <th scope="col">6->10</th>
         </tr>
       </thead>
       <tbody class="lop-table-body">
+        {% for tkb  in danhSachTkb %}
         <tr>
-          <td>Thứ 2</td>
-          {% for thuHai in danhSachTkb.thuHai %}
-          <td>
-            {% for monHocTheoTiet in thuHai %}
-            <div>{{monHocTheoTiet.thongtinMonHoc.name}} </br>
-              <strong>{{monHocTheoTiet.thongtinGiangVien.name}}</strong></div>
-            {% endfor %}
-          </td>
-          {% endfor %}
-        </tr>
-        <tr>
-          <td>Thứ 3</td>
-          {% for thuBa in danhSachTkb.thuBa %}
-          <td>
-            {% for monHocTheoTiet in thuBa %}
+          <td scope="col">{{tkb.stt}}</td>
+          <td scope="col">{{tkb.thongtinMonHoc.name}}</td>
+          <td scope="col">{{tkb.thongtinMonHoc.mamonhoc}}</td>
+          <td scope="col">{{tkb.thongtinMonHoc.sotinchi}}</td>
 
-            <div>{{monHocTheoTiet.thongtinMonHoc.name}} </br>
-              <strong>{{monHocTheoTiet.thongtinGiangVien.name}}</strong></div> {% endfor %}
-          </td>
-          {% endfor %}
-        </tr>
-        <tr>
-          <td>Thứ 4</td>
-          {% for thuTu in danhSachTkb.thuTu %}
-          <td>
-            {% for monHocTheoTiet in thuTu %}
+          {% if tkb.thuHocHienTai == 2 %}
+            {% if tkb.thongtinLop.buoihoc == 's' %}
+            <td scope="col">{{tkb.tietHocHienTai}}</td>
+            <td scope="col"></td>
+            {% else %}
+            <td scope="col"></td>
+            <td scope="col">{{tkb.tietHocHienTai}}</td>
+            {% endif %}
+          {% else %}
+            <td scope="col"></td>
+            <td scope="col"></td>
+          {% endif %}
 
-            <div>{{monHocTheoTiet.thongtinMonHoc.name}} </br>
-              <strong>{{monHocTheoTiet.thongtinGiangVien.name}}</strong></div> {% endfor %}
-          </td>
-          {% endfor %}
+          {% if tkb.thuHocHienTai == 3 %}
+            {% if tkb.thongtinLop.buoihoc == 's' %}
+            <td scope="col">{{tkb.tietHocHienTai}}</td>
+            <td scope="col"></td>
+            {% else %}
+            <td scope="col"></td>
+            <td scope="col">{{tkb.tietHocHienTai}}</td>
+            {% endif %}
+          {% else %}
+            <td scope="col"></td>
+            <td scope="col"></td>
+          {% endif %}
+          {% if tkb.thuHocHienTai == 4 %}
+            {% if tkb.thongtinLop.buoihoc == 's' %}
+            <td scope="col">{{tkb.tietHocHienTai}}</td>
+            <td scope="col"></td>
+            {% else %}
+            <td scope="col"></td>
+            <td scope="col">{{tkb.tietHocHienTai}}</td>
+            {% endif %}
+          {% else %}
+            <td scope="col"></td>
+            <td scope="col"></td>
+          {% endif %}
+
+          {% if tkb.thuHocHienTai == 5 %}
+            {% if tkb.thongtinLop.buoihoc == 's' %}
+            <td scope="col">{{tkb.tietHocHienTai}}</td>
+            <td scope="col"></td>
+            {% else %}
+            <td scope="col"></td>
+            <td scope="col">{{tkb.tietHocHienTai}}</td>
+            {% endif %}
+          {% else %}
+            <td scope="col"></td>
+            <td scope="col"></td>
+          {% endif %}
+
+          {% if tkb.thuHocHienTai == 6 %}
+            {% if tkb.thongtinLop.buoihoc == 's' %}
+            <td scope="col">{{tkb.tietHocHienTai}}</td>
+            <td scope="col"></td>
+            {% else %}
+            <td scope="col"></td>
+            <td scope="col">{{tkb.tietHocHienTai}}</td>
+            {% endif %}
+          {% else %}
+            <td scope="col"></td>
+            <td scope="col"></td>
+          {% endif %}
+
+          <td scope="col">{{tkb.thongtinGiangVien.name}}</td>
         </tr>
-        <tr>
-          <td>Thứ 5</td>
-          {% for thuNam in danhSachTkb.thuNam %}
-          <td>
-            {% for monHocTheoTiet in thuNam %}
-            <div>{{monHocTheoTiet.thongtinMonHoc.name}} </br>
-              <strong>{{monHocTheoTiet.thongtinGiangVien.name}}</strong></div>
-            {% endfor %}
-          </td>
-          {% endfor %}
-        </tr>
-        <tr>
-          <td>Thứ 6</td>
-          {% for thuSau in danhSachTkb.thuSau %}
-          <td>
-            {% for monHocTheoTiet in thuSau %}
-            <div>{{monHocTheoTiet.thongtinMonHoc.name}} </br>
-              <strong>{{monHocTheoTiet.thongtinGiangVien.name}}</strong></div>
-            {% endfor %}
-          </td>
-          {% endfor %}
-        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>

@@ -30,6 +30,8 @@
   margin-bottom: 20px;
 }
 
-.table-head {
-  
+th, td{
+  border: 1px solid #000 !important;
+  padding: 10px 0px;
+  align-items: 'center';
 }

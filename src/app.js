@@ -623,10 +623,11 @@ app.get('/tkb/laitao', async (req, res) => {
 app.get('/tkb/lop', async (req, res) => {
   try {
     const { lop = 2, idtkb = 1 } = req.query
-    const [listTeacherNew, listClassNew, listSubjectNew] = await Promise.all([
+    const [listTeacherNew, listClassNew, listSubjectNew, listPhanCongGiangDay] = await Promise.all([
       await knex('giangvien').select(),
       await knex('lop').select(),
-      await knex('monhoc').select()
+      await knex('monhoc').select(),
+      await knex('phanconggiangday').select()
     ])
 
     const tkb = await knex('x').select().where('id', idtkb).first()
@@ -650,20 +651,31 @@ app.get('/tkb/lop', async (req, res) => {
     if (lop) {
       tkbThemThongTin = _.filter(tkbThemThongTin, { idlop: parseInt(lop) })
       thongTinLop = _.filter(listClassNew, { id: parseInt(lop) })[0]
-
-      const tkbThu2 = _.filter(tkbThemThongTin, { thu: 2 })
-      const tkbThu3 = _.filter(tkbThemThongTin, { thu: 3 })
-      const tkbThu4 = _.filter(tkbThemThongTin, { thu: 4 })
-      const tkbThu5 = _.filter(tkbThemThongTin, { thu: 5 })
-      const tkbThu6 = _.filter(tkbThemThongTin, { thu: 6 })
-
-      const danhSachTkb = {
-        thuHai: filterTkbNew(tkbThu2),
-        thuBa: filterTkbNew(tkbThu3),
-        thuTu: filterTkbNew(tkbThu4),
-        thuNam: filterTkbNew(tkbThu5),
-        thuSau: filterTkbNew(tkbThu6)
+      const danhSachMonHocCuaLop = _.filter(listPhanCongGiangDay, { idlop: thongTinLop.id })
+      const danhSachTkb = []
+      for (let indexMonHoc = 0; indexMonHoc < danhSachMonHocCuaLop.length; indexMonHoc++) {
+        const monHocHienTai = danhSachMonHocCuaLop[indexMonHoc]
+        const thongTinTietHocCuaMonHienTai = _.filter(tkbThemThongTin, { idmonhoc: monHocHienTai.idmonhoc })
+        const thuHocHienTai = thongTinTietHocCuaMonHienTai[0].thu
+        let tietHocHienTai = thongTinTietHocCuaMonHienTai[0].tiet
+        for (let indexTietMon = 1; indexTietMon < thongTinTietHocCuaMonHienTai.length; indexTietMon++) {
+          const thongTinTietHoc = thongTinTietHocCuaMonHienTai[indexTietMon]
+          tietHocHienTai = `${tietHocHienTai}.${thongTinTietHoc.tiet}`
+        }
+        danhSachTkb.push({
+          stt: indexMonHoc + 1,
+          thongtinGiangVien: thongTinTietHocCuaMonHienTai[0].thongtinGiangVien,
+          thongtinLop: thongTinTietHocCuaMonHienTai[0].thongtinLop,
+          thongtinMonHoc: thongTinTietHocCuaMonHienTai[0].thongtinMonHoc,
+          thuHocHienTai,
+          tietHocHienTai
+        })
       }
+
+      console.log('================================================')
+      console.log('danhSachTkb', danhSachTkb)
+      console.log('================================================')
+
       return res.render('tkb/tkb-lop.html', {
         danhSachTkb,
         listClassNew,
