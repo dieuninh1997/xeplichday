@@ -184,13 +184,21 @@ app.get('/:type', async (req, res) => {
       break
   }
 })
+
+function shuffle (array) {
+  array.sort(() => Math.random() - 0.5)
+};
+
 app.get('/tkb/sinhtkb', async (req, res) => {
-  const [listTeacherNew, listClassNew, listSubjectNew, listPhanCongGiangDayNew] = await Promise.all([
+  let [listTeacherNew, listClassNew, listSubjectNew, listPhanCongGiangDayNew] = await Promise.all([
     await knex('giangvien').select(),
     await knex('lop').select(),
     await knex('monhoc').select(),
     await knex('phanconggiangday').select()
   ])
+  shuffle(listTeacherNew)//
+  shuffle(listClassNew)//
+  shuffle(listSubjectNew)//
 
   const danhSachThuHoc = [2, 3, 4, 5, 6]
   const danhTietHocTrongNgay = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
