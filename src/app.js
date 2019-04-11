@@ -133,9 +133,7 @@ function kiemTra (arrayX, A, monhoc, listTkbOke = []) {
     }
     KT && listTkbOke.push(tkb)
   }
-  console.log('================================================')
-  console.log('listTkbOke', listTkbOke.length)
-  console.log('================================================')
+
   return listTkbOke
 }
 
@@ -398,9 +396,6 @@ app.get('/tkb/sinhtkb', async (req, res) => {
 
   const XCuoiCung = _.filter(X, { duocdayloptaitiet: 1 })
   const listDone = await knex('xrandom').insert({ value: JSON.stringify(XCuoiCung) })
-  console.log('================================================')
-  console.log('Da them ', listDone)
-  console.log('================================================')
 
   return res.redirect('/tkb/sinhtkb')
 })
@@ -559,9 +554,7 @@ app.get('/tkb/giangbuoc', async (req, res) => {
         listDung.push({ id: indexX })
       }
     }
-    console.log('================================================')
-    console.log('listDung', listDung)
-    console.log('================================================')
+
     for (let indexListDung = 0; indexListDung < listDung.length; indexListDung++) {
       const valueJson = JSON.parse(listRandomX[listDung[indexListDung].id].value)
       let tongNgayLenTruongGv = 0
@@ -586,9 +579,7 @@ app.get('/tkb/giangbuoc', async (req, res) => {
     }
 
     const listThemVaoX = await Promise.all(listPromise)
-    console.log('================================================')
-    console.log('listThemVaoX', listThemVaoX)
-    console.log('================================================')
+
     return res.json({ listThemVaoX })
   } catch (error) {
     res.json({
@@ -688,9 +679,7 @@ app.get('/tkb/giangbuoc/laitao', async (req, res) => {
         listDung.push({ id: indexX })
       }
     }
-    console.log('================================================')
-    console.log('listDung', listDung)
-    console.log('================================================')
+
     for (let indexListDung = 0; indexListDung < listDung.length; indexListDung++) {
       const valueJson = JSON.parse(listLaiTao[listDung[indexListDung].id].value)
       let tongNgayLenTruongGv = 0
@@ -715,9 +704,7 @@ app.get('/tkb/giangbuoc/laitao', async (req, res) => {
     }
 
     const listThemVaoX = await Promise.all(listPromise)
-    console.log('================================================')
-    console.log('listThemVaoX', listThemVaoX)
-    console.log('================================================')
+
     return res.json({ listThemVaoX })
   } catch (error) {
     res.json({
@@ -746,67 +733,6 @@ const kiemTraGiangBuocLaiTao = async () => {
       let KT = true
       const giangvienHienTai = listTeacherNew[indexGv]
       const listTietHocGv = _.filter(jsonXAfterSort, { idgiangvien: giangvienHienTai.id })
-
-      // const listTietThu2 = _.filter(listTietHocGv, { thu: 2 })
-      // if (listTietThu2.length) {
-      //   for (let indexTietThu2 = 0; indexTietThu2 < listTietThu2.length - 1; indexTietThu2++) {
-      //     const tietDau = listTietThu2[indexTietThu2].tiet
-      //     const tietSau = listTietThu2[indexTietThu2 + 1].tiet
-      //     if (tietSau - tietDau !== 1) {
-      //       KT = false
-      //       KT_NGOAI = false
-      //       break
-      //     }
-      //   }
-      // }
-      // const listTietThu3 = _.filter(listTietHocGv, { thu: 3 })
-      // if (listTietThu3.length) {
-      //   for (let indexTietThu3 = 0; indexTietThu3 < listTietThu3.length - 1; indexTietThu3++) {
-      //     const tietDau = listTietThu3[indexTietThu3].tiet
-      //     const tietSau = listTietThu3[indexTietThu3 + 1].tiet
-      //     if (tietSau - tietDau !== 1) {
-      //       KT = false
-      //       KT_NGOAI = false
-      //       break
-      //     }
-      //   }
-      // }
-      // const listTietThu4 = _.filter(listTietHocGv, { thu: 4 })
-      // if (listTietThu4.length) {
-      //   for (let indexTietThu4 = 0; indexTietThu4 < listTietThu4.length - 1; indexTietThu4++) {
-      //     const tietDau = listTietThu4[indexTietThu4].tiet
-      //     const tietSau = listTietThu4[indexTietThu4 + 1].tiet
-      //     if (tietSau - tietDau !== 1) {
-      //       KT = false
-      //       KT_NGOAI = false
-      //       break
-      //     }
-      //   }
-      // }
-      // const listTietThu5 = _.filter(listTietHocGv, { thu: 5 })
-      // if (listTietThu5.length) {
-      //   for (let indexTietThu5 = 0; indexTietThu5 < listTietThu5.length - 1; indexTietThu5++) {
-      //     const tietDau = listTietThu5[indexTietThu5].tiet
-      //     const tietSau = listTietThu5[indexTietThu5 + 1].tiet
-      //     if (tietSau - tietDau !== 1) {
-      //       KT = false
-      //       KT_NGOAI = false
-      //       break
-      //     }
-      //   }
-      // }
-      // const listTietThu6 = _.filter(listTietHocGv, { thu: 6 })
-      // if (listTietThu6.length) {
-      //   for (let indexTietThu6 = 0; indexTietThu6 < listTietThu6.length - 1; indexTietThu6++) {
-      //     const tietDau = listTietThu6[indexTietThu6].tiet
-      //     const tietSau = listTietThu6[indexTietThu6 + 1].tiet
-      //     if (tietSau - tietDau !== 1) {
-      //       KT = false
-      //       KT_NGOAI = false
-      //       break
-      //     }
-      //   }
-      // }
       if (!KT) {
         break
       }
@@ -816,9 +742,7 @@ const kiemTraGiangBuocLaiTao = async () => {
       listDung.push({ id: indexX })
     }
   }
-  console.log('================================================')
-  console.log('listDung', listDung)
-  console.log('================================================')
+
   for (let indexListDung = 0; indexListDung < listDung.length; indexListDung++) {
     const valueJson = JSON.parse(listLaiTao[listDung[indexListDung].id].value)
     let tongNgayLenTruongGv = 0
@@ -843,44 +767,49 @@ const kiemTraGiangBuocLaiTao = async () => {
   }
 
   const listThemVaoX = await Promise.all(listPromise)
-  console.log('================================================')
-  console.log('listThemVaoX', listThemVaoX)
-  console.log('================================================')
+  console.log('========================================')
+  console.log('listThemVaoX', listThemVaoX.length)
+  console.log('========================================')
   return listThemVaoX.length
 }
 app.get('/tkb/laitao', async (req, res) => {
   try {
-    const [listX] = await Promise.all([
-      await knex('xlaitao').select()
-    ])
+    do {
+      const [listX] = await Promise.all([
+        await knex('xlaitao').select()
+      ])
 
-    // Xoa thong tin lai tao cu
-    await knex('xlaitao').truncate()
-    let listSauLaiTaoPromise = []
-    for (let indexX1 = 0; indexX1 < listX.length - 1; indexX1 += 2) {
-      const x1 = JSON.parse(listX[indexX1].value)
-      const sangX1 = _.filter(x1, (tkb) => {
-        return tkb.tiet >= 1 && tkb.tiet <= 5
-      })
-      const chieuX1 = _.filter(x1, (tkb) => {
-        return tkb.tiet >= 6 && tkb.tiet <= 10
-      })
+      // Xoa thong tin lai tao cu
+      await knex('xlaitao').truncate()
+      let listSauLaiTaoPromise = []
+      for (let indexX1 = 0; indexX1 < listX.length - 1; indexX1 += 2) {
+        const x1 = JSON.parse(listX[indexX1].value)
+        const sangX1 = _.filter(x1, (tkb) => {
+          return tkb.tiet >= 1 && tkb.tiet <= 5
+        })
+        const chieuX1 = _.filter(x1, (tkb) => {
+          return tkb.tiet >= 6 && tkb.tiet <= 10
+        })
 
-      const x2 = JSON.parse(listX[indexX1 + 1].value)
-      const sangX2 = _.filter(x2, (tkb) => {
-        return tkb.tiet >= 1 && tkb.tiet <= 5
-      })
-      const chieuX2 = _.filter(x2, (tkb) => {
-        return tkb.tiet >= 6 && tkb.tiet <= 10
-      })
-      const xmoi3 = [...sangX1, ...chieuX2]
-      const xmoi4 = [...sangX2, ...chieuX1]
-      listSauLaiTaoPromise.push(knex('xlaitao').insert({ value: JSON.stringify(xmoi3) }))
-      listSauLaiTaoPromise.push(knex('xlaitao').insert({ value: JSON.stringify(xmoi4) }))
-    }
-    const listSauLaiTaoThemThanhCong = await Promise.all(listSauLaiTaoPromise)
-    return res.json({ success: true,
-      data: listSauLaiTaoThemThanhCong })
+        const x2 = JSON.parse(listX[indexX1 + 1].value)
+        const sangX2 = _.filter(x2, (tkb) => {
+          return tkb.tiet >= 1 && tkb.tiet <= 5
+        })
+        const chieuX2 = _.filter(x2, (tkb) => {
+          return tkb.tiet >= 6 && tkb.tiet <= 10
+        })
+        const xmoi3 = [...sangX1, ...chieuX2]
+        const xmoi4 = [...sangX2, ...chieuX1]
+        listSauLaiTaoPromise.push(knex('xlaitao').insert({ value: JSON.stringify(xmoi3) }))
+        listSauLaiTaoPromise.push(knex('xlaitao').insert({ value: JSON.stringify(xmoi4) }))
+      }
+      const listSauLaiTaoThemThanhCong = await Promise.all(listSauLaiTaoPromise)
+    } while (await kiemTraGiangBuocLaiTao() !== 1)
+
+    console.log('========================================')
+    console.log('kiemTraGiangBuocLaiTao=', await kiemTraGiangBuocLaiTao())
+    console.log('========================================')
+    return res.json({ success: true })
   } catch (error) {
     return res.json({
       success: false,
@@ -941,10 +870,6 @@ app.get('/tkb/lop', async (req, res) => {
           tietHocHienTai
         })
       }
-
-      console.log('================================================')
-      console.log('danhSachTkb', danhSachTkb)
-      console.log('================================================')
 
       return res.render('tkb/tkb-lop.html', {
         danhSachTkb,
