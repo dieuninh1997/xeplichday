@@ -314,7 +314,7 @@ app.get('/tkb/sinhtkb', async (req, res) => {
 
   // For mảng A phân công giảng dạy : 0 được dạy - 1 không được dạy ({ idgiangvien: 2, idmonhoc: 2, idlop: 2, duocdaylop: 0 })
   let dem = 0
-  listTeacherNew = _.shuffle(listTeacherNew)//
+  // listTeacherNew = _.shuffle(listTeacherNew)//
 
   for (let indexGV = 0; indexGV < listTeacherNew.length; indexGV++) {
     const phanCongGiangDayCuaGvHienTai = _.filter(A, { idgiangvien: listTeacherNew[indexGV].id, duocdaylop: 0 })
@@ -639,7 +639,7 @@ app.get('/tkb/giangvien', async (req, res) => {
       await knex('monhoc').select()
     ])
 
-    const tkb = await knex('xlaitao').select().where('id', idtkb).first()
+    const tkb = await knex('xrandom').select().where('id', 15).first()
     const tkbCuoi = JSON.parse(tkb.value)
     let danhsachDuocSapXep = _.sortBy(tkbCuoi, ['thu', 'tiet'])
     let tkbThemThongTin = []
