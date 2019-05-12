@@ -9,7 +9,7 @@
           <select name="idmonhoc" id="select-gv">
             <option value="" disabled>Chọn môn học</option>
             {% for subject in listSubject %}
-            <option value="{{subject.id}}" {% if dataEdit.idmonhoc == subject.id %} selected {% endif %}>{{subject.name}}</option>
+            <option value="{{subject.id}}" {% if dataEdit.idmonhoc == subject.id %} selected {% endif %}>{{subject.name}} - {{subject.mamonhoc}}</option>
             {% endfor %}
           </select>
           <label>Môn học</label>
