@@ -10,7 +10,7 @@
           <select name="idMonHoc">
             <option value="" disabled selected>Chọn môn học</option>
             {% for subject in listSubjectGiangDay %}
-            <option value={{subject.id}}>{{subject.name}}</option>
+            <option value={{subject.id}}>{{subject.name}} - {{subject.mamonhoc}}</option>
             {% endfor %}
           </select>
           <label>Môn học</label>
@@ -56,7 +56,7 @@
             {% for subject in listPhanCongGiangDay %}
             <tr id="pcgd-{{subject.id}}">
               <td>{{ loop.index }}</td>
-              <td>{{ subject.chiTietMonHoc.name }}</td>
+              <td>{{ subject.chiTietMonHoc.name }} - {{ subject.chiTietMonHoc.mamonhoc }}</td>
               <td>{{ subject.chiTietMonHoc.sotinchi }}</td>
               <td>{{ subject.chiTietGv.name }}</td>
               <td>K{{ subject.chiTietLopHoc.khoahoc }} - {{ subject.chiTietLopHoc.name }}</td>
